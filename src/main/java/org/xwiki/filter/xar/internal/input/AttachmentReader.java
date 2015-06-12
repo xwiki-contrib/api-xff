@@ -28,8 +28,8 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.codec.binary.Base64;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.FilterEventParameters;
-import org.xwiki.filter.xar.internal.XARAttachmentModel;
-import org.xwiki.filter.xar.internal.XARFilterUtils.EventParameter;
+import org.xwiki.filter.xar.internal.XAR2AttachmentModel;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
 import org.xwiki.filter.FilterException;
 
 /**
@@ -48,7 +48,7 @@ public class AttachmentReader extends AbstractReader implements XARXMLReader<Att
 
         public FilterEventParameters parameters = new FilterEventParameters();
 
-        public void send(XARInputFilter proxyFilter) throws FilterException
+        public void send(XAR2InputFilter proxyFilter) throws FilterException
         {
             proxyFilter.onWikiAttachment(this.name, new ByteArrayInputStream(this.content),
                 Long.valueOf(this.content.length), this.parameters);
@@ -65,7 +65,7 @@ public class AttachmentReader extends AbstractReader implements XARXMLReader<Att
 
             String value = xmlReader.getElementText();
 
-            EventParameter parameter = XARAttachmentModel.ATTACHMENT_PARAMETERS.get(elementName);
+            EventParameter parameter = XAR2AttachmentModel.ATTACHMENT_PARAMETERS.get(elementName);
 
             if (parameter != null) {
                 Object wsValue = convert(parameter.type, value);
@@ -73,9 +73,9 @@ public class AttachmentReader extends AbstractReader implements XARXMLReader<Att
                     wikiAttachment.parameters.put(parameter.name, wsValue);
                 }
             } else {
-                if (XARAttachmentModel.ELEMENT_NAME.equals(elementName)) {
+                if (XAR2AttachmentModel.ELEMENT_NAME.equals(elementName)) {
                     wikiAttachment.name = value;
-                } else if (XARAttachmentModel.ELEMENT_CONTENT.equals(elementName)) {
+                } else if (XAR2AttachmentModel.ELEMENT_CONTENT.equals(elementName)) {
                     wikiAttachment.content = Base64.decodeBase64(value.getBytes());
                 }
             }

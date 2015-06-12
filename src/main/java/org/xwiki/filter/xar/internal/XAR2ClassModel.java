@@ -19,32 +19,31 @@
  */
 package org.xwiki.filter.xar.internal;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
-import org.xwiki.filter.xar.internal.XARFilterUtils.EventParameter;
-import org.xwiki.xar.internal.model.XarAttachmentModel;
+import org.xwiki.filter.event.model.WikiClassFilter;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.xar.internal.model.XarClassModel;
 
 /**
  * @version $Id$
  * @since 6.2M1
  */
-public class XARAttachmentModel extends XarAttachmentModel
+public class XAR2ClassModel extends XarClassModel
 {
     // Utils
 
-    public static final Map<String, EventParameter> ATTACHMENT_PARAMETERS = new HashMap<String, EventParameter>()
+    public static final Map<String, EventParameter> CLASS_PARAMETERS = new HashMap<String, EventParameter>()
     {
         {
-            put(ELEMENT_MIMETYPE, new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_MIMETYPE));
-            put(ELEMENT_REVISION, new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_REVISION));
-            put(ELEMENT_REVISION_AUTHOR, new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_REVISION_AUTHOR));
-            put(ELEMENT_REVISION_DATE,
-                new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_REVISION_DATE, Date.class));
-            put(ELEMENT_REVISION_COMMENT, new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_REVISION_COMMENT));
-            put(ELEMENT_REVISIONS, new EventParameter(XWikiWikiAttachmentFilter.PARAMETER_JRCSREVISIONS));
+            put(ELEMENT_CUSTOMCLASS, new EventParameter(WikiClassFilter.PARAMETER_CUSTOMCLASS));
+            put(ELEMENT_CUSTOMMAPPING, new EventParameter(WikiClassFilter.PARAMETER_CUSTOMMAPPING));
+            put(ELEMENT_SHEET_DEFAULTVIEW, new EventParameter(WikiClassFilter.PARAMETER_SHEET_DEFAULTVIEW));
+            put(ELEMENT_SHEET_DEFAULTEDIT, new EventParameter(WikiClassFilter.PARAMETER_SHEET_DEFAULTEDIT));
+            put(ELEMENT_DEFAULTSPACE, new EventParameter(WikiClassFilter.PARAMETER_DEFAULTSPACE));
+            put(ELEMENT_NAMEFIELD, new EventParameter(WikiClassFilter.PARAMETER_NAMEFIELD));
+            put(ELEMENT_VALIDATIONSCRIPT, new EventParameter(WikiClassFilter.PARAMETER_VALIDATIONSCRIPT));
         }
     };
 }

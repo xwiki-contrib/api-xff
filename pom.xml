@@ -27,7 +27,7 @@
     <artifactId>xwiki-platform-filter-streams</artifactId>
     <version>7.2-SNAPSHOT</version>
   </parent>
-  <artifactId>xwiki-platform-filter-stream-xar</artifactId>
+  <artifactId>xwiki-platform-filter-stream-xar2</artifactId>
   <name>XWiki Platform - Filter - XAR2</name>
   <description>Filter stream extension to read and write XAR2 packages</description>
   <properties>

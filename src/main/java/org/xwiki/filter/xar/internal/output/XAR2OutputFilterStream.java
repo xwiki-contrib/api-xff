@@ -43,14 +43,14 @@ import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
 import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
 import org.xwiki.filter.output.AbstractBeanOutputFilterStream;
 import org.xwiki.filter.output.WriterOutputTarget;
-import org.xwiki.filter.xar.internal.XARAttachmentModel;
-import org.xwiki.filter.xar.internal.XARClassModel;
-import org.xwiki.filter.xar.internal.XARClassPropertyModel;
-import org.xwiki.filter.xar.internal.XARFilter;
-import org.xwiki.filter.xar.internal.XARObjectModel;
-import org.xwiki.filter.xar.internal.XARObjectPropertyModel;
-import org.xwiki.filter.xar.internal.XARFilterUtils;
-import org.xwiki.filter.xar.output.XAROutputProperties;
+import org.xwiki.filter.xar.internal.XAR2AttachmentModel;
+import org.xwiki.filter.xar.internal.XAR2ClassModel;
+import org.xwiki.filter.xar.internal.XAR2ClassPropertyModel;
+import org.xwiki.filter.xar.internal.XAR2Filter;
+import org.xwiki.filter.xar.internal.XAR2ObjectModel;
+import org.xwiki.filter.xar.internal.XAR2ObjectPropertyModel;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils;
+import org.xwiki.filter.xar.output.XAR2OutputProperties;
 import org.xwiki.filter.xml.internal.output.FilterStreamXMLStreamWriter;
 import org.xwiki.filter.xml.output.ResultOutputTarget;
 import org.xwiki.model.reference.EntityReference;
@@ -65,9 +65,9 @@ import org.xwiki.xar.internal.model.XarDocumentModel;
  * @since 6.2M1
  */
 @Component
-@Named(XARFilterUtils.ROLEHINT)
+@Named(XAR2FilterUtils.ROLEHINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROutputProperties> implements XARFilter
+public class XAR2OutputFilterStream extends AbstractBeanOutputFilterStream<XAR2OutputProperties> implements XAR2Filter
 {
     @Inject
     @Named("local")
@@ -79,7 +79,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     @Inject
     private XarObjectPropertySerializerManager propertySerializerManager;
 
-    private XARWikiWriter wikiWriter;
+    private XAR2WikiWriter wikiWriter;
 
     private String currentSpace;
 
@@ -154,7 +154,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     public void beginWiki(String name, FilterEventParameters parameters) throws FilterException
     {
         this.wikiWriter =
-            new XARWikiWriter(this.properties.getPackageName() != null ? this.properties.getPackageName() : name,
+            new XAR2WikiWriter(this.properties.getPackageName() != null ? this.properties.getPackageName() : name,
                 this.properties);
     }
 
@@ -214,7 +214,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
             } else {
                 if (this.wikiWriter == null) {
                     this.wikiWriter =
-                        new XARWikiWriter(this.properties.getPackageName() != null ? this.properties.getPackageName()
+                        new XAR2WikiWriter(this.properties.getPackageName() != null ? this.properties.getPackageName()
                             : "package", this.properties);
                 }
 
@@ -348,40 +348,40 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     public void onWikiAttachment(String name, InputStream content, Long size, FilterEventParameters parameters)
         throws FilterException
     {
-        this.writer.writeStartElement(XARAttachmentModel.ELEMENT_ATTACHMENT);
+        this.writer.writeStartElement(XAR2AttachmentModel.ELEMENT_ATTACHMENT);
 
-        this.writer.writeElement(XARAttachmentModel.ELEMENT_NAME, name);
+        this.writer.writeElement(XAR2AttachmentModel.ELEMENT_NAME, name);
         if (this.properties.isPreserveVersion()
             && parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_JRCSREVISIONS)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_REVISIONS,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_REVISIONS,
                 (String) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_JRCSREVISIONS));
         }
 
         if (parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_MIMETYPE)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_MIMETYPE,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_MIMETYPE,
                 (String) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_MIMETYPE));
         }
         if (parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_REVISION_AUTHOR)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_REVISION_AUTHOR,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_REVISION_AUTHOR,
                 (String) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_REVISION_AUTHOR));
         }
         if (parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_REVISION_DATE)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_REVISION_DATE,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_REVISION_DATE,
                 toString((Date) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_REVISION_DATE)));
         }
         if (parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_REVISION)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_REVISION,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_REVISION,
                 (String) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_REVISION));
         }
         if (parameters.containsKey(XWikiWikiAttachmentFilter.PARAMETER_REVISION_COMMENT)) {
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_REVISION_COMMENT,
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_REVISION_COMMENT,
                 (String) parameters.get(XWikiWikiAttachmentFilter.PARAMETER_REVISION_COMMENT));
         }
 
         if (content != null) {
             long contentSize = 0;
 
-            this.writer.writeStartElement(XARAttachmentModel.ELEMENT_CONTENT);
+            this.writer.writeStartElement(XAR2AttachmentModel.ELEMENT_CONTENT);
             byte[] buffer = new byte[ATTACHMENT_BUFFER_CHUNK_SIZE];
             int readSize;
             do {
@@ -404,7 +404,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
             } while (readSize == ATTACHMENT_BUFFER_CHUNK_SIZE);
             this.writer.writeEndElement();
 
-            this.writer.writeElement(XARAttachmentModel.ELEMENT_CONTENT_SIZE, toString(contentSize));
+            this.writer.writeElement(XAR2AttachmentModel.ELEMENT_CONTENT_SIZE, toString(contentSize));
         }
 
         this.writer.writeEndElement();
@@ -413,37 +413,37 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     @Override
     public void beginWikiClass(FilterEventParameters parameters) throws FilterException
     {
-        this.writer.writeStartElement(XARClassModel.ELEMENT_CLASS);
+        this.writer.writeStartElement(XAR2ClassModel.ELEMENT_CLASS);
 
-        this.writer.writeElement(XARClassModel.ELEMENT_NAME, this.currentObjectClass != null ? this.currentObjectClass
+        this.writer.writeElement(XAR2ClassModel.ELEMENT_NAME, this.currentObjectClass != null ? this.currentObjectClass
             : this.localSerializer.serialize(this.currentDocumentReference));
 
         if (parameters.containsKey(WikiClassFilter.PARAMETER_CUSTOMCLASS)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_CUSTOMCLASS,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_CUSTOMCLASS,
                 (String) parameters.get(WikiClassFilter.PARAMETER_CUSTOMCLASS));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_CUSTOMMAPPING)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_CUSTOMMAPPING,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_CUSTOMMAPPING,
                 (String) parameters.get(WikiClassFilter.PARAMETER_CUSTOMMAPPING));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_SHEET_DEFAULTVIEW)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_SHEET_DEFAULTVIEW,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_SHEET_DEFAULTVIEW,
                 (String) parameters.get(WikiClassFilter.PARAMETER_SHEET_DEFAULTVIEW));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_SHEET_DEFAULTEDIT)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_SHEET_DEFAULTEDIT,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_SHEET_DEFAULTEDIT,
                 (String) parameters.get(WikiClassFilter.PARAMETER_SHEET_DEFAULTEDIT));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_DEFAULTSPACE)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_DEFAULTSPACE,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_DEFAULTSPACE,
                 (String) parameters.get(WikiClassFilter.PARAMETER_DEFAULTSPACE));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_NAMEFIELD)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_NAMEFIELD,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_NAMEFIELD,
                 (String) parameters.get(WikiClassFilter.PARAMETER_NAMEFIELD));
         }
         if (parameters.containsKey(WikiClassFilter.PARAMETER_VALIDATIONSCRIPT)) {
-            this.writer.writeElement(XARClassModel.ELEMENT_VALIDATIONSCRIPT,
+            this.writer.writeElement(XAR2ClassModel.ELEMENT_VALIDATIONSCRIPT,
                 (String) parameters.get(WikiClassFilter.PARAMETER_VALIDATIONSCRIPT));
         }
     }
@@ -468,7 +468,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     @Override
     public void endWikiClassProperty(String name, String type, FilterEventParameters parameters) throws FilterException
     {
-        this.writer.writeElement(XARClassPropertyModel.ELEMENT_CLASSTYPE, type);
+        this.writer.writeElement(XAR2ClassPropertyModel.ELEMENT_CLASSTYPE, type);
 
         this.writer.writeEndElement();
     }
@@ -483,18 +483,18 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     @Override
     public void beginWikiObject(String name, FilterEventParameters parameters) throws FilterException
     {
-        this.writer.writeStartElement(XARObjectModel.ELEMENT_OBJECT);
+        this.writer.writeStartElement(XAR2ObjectModel.ELEMENT_OBJECT);
 
         this.currentObjectClass = (String) parameters.get(WikiObjectFilter.PARAMETER_CLASS_REFERENCE);
 
-        this.writer.writeElement(XARObjectModel.ELEMENT_NAME,
+        this.writer.writeElement(XAR2ObjectModel.ELEMENT_NAME,
             this.localSerializer.serialize(this.currentDocumentReference));
-        this.writer.writeElement(XARObjectModel.ELEMENT_NUMBER,
+        this.writer.writeElement(XAR2ObjectModel.ELEMENT_NUMBER,
             toString((Integer) parameters.get(WikiObjectFilter.PARAMETER_NUMBER)));
-        this.writer.writeElement(XARObjectModel.ELEMENT_CLASSNAME, this.currentObjectClass);
+        this.writer.writeElement(XAR2ObjectModel.ELEMENT_CLASSNAME, this.currentObjectClass);
 
         if (parameters.containsKey(WikiObjectFilter.PARAMETER_GUID)) {
-            this.writer.writeElement(XARObjectModel.ELEMENT_GUID,
+            this.writer.writeElement(XAR2ObjectModel.ELEMENT_GUID,
                 (String) parameters.get(WikiObjectFilter.PARAMETER_GUID));
         }
 
@@ -514,7 +514,7 @@ public class XAROutputFilterStream extends AbstractBeanOutputFilterStream<XAROut
     public void onWikiObjectProperty(String name, Object value, FilterEventParameters parameters)
         throws FilterException
     {
-        this.writer.writeStartElement(XARObjectPropertyModel.ELEMENT_PROPERTY);
+        this.writer.writeStartElement(XAR2ObjectPropertyModel.ELEMENT_PROPERTY);
 
         this.writer.writeStartElement(name);
 

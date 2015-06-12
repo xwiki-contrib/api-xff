@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
-import org.xwiki.filter.xar.internal.XARFilterUtils.EventParameter;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.rendering.syntax.Syntax;
 import org.xwiki.xar.internal.model.XarDocumentModel;
@@ -34,7 +34,7 @@ import org.xwiki.xar.internal.model.XarDocumentModel;
  * @version $Id$
  * @since 6.2M1
  */
-public class XARDocumentModel extends XarDocumentModel
+public class XAR2DocumentModel extends XarDocumentModel
 {
     // Utils
 

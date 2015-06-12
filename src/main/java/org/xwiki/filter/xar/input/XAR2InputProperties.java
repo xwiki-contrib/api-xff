@@ -33,7 +33,7 @@ import org.xwiki.stability.Unstable;
  * @since 6.2M1
  */
 @Unstable
-public class XARInputProperties extends XMLInputProperties
+public class XAR2InputProperties extends XMLInputProperties
 {
     /**
      * @see #getEntities()

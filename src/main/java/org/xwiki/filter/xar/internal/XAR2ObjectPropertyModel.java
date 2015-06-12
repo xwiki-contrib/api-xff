@@ -19,27 +19,12 @@
  */
 package org.xwiki.filter.xar.internal;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.xwiki.filter.event.model.WikiObjectFilter;
-import org.xwiki.filter.xar.internal.XARFilterUtils.EventParameter;
-import org.xwiki.xar.internal.model.XarObjectModel;
+import org.xwiki.xar.internal.model.XarObjectPropertyModel;
 
 /**
  * @version $Id$
  * @since 6.2M1
  */
-public class XARObjectModel extends XarObjectModel
+public class XAR2ObjectPropertyModel extends XarObjectPropertyModel
 {
-    // Utils
-
-    public static final Map<String, EventParameter> OBJECT_PARAMETERS = new HashMap<String, EventParameter>()
-    {
-        {
-            put(ELEMENT_CLASSNAME, new EventParameter(WikiObjectFilter.PARAMETER_CLASS_REFERENCE));
-            put(ELEMENT_GUID, new EventParameter(WikiObjectFilter.PARAMETER_GUID));
-            put(ELEMENT_NUMBER, new EventParameter(WikiObjectFilter.PARAMETER_NUMBER, Integer.class));
-        }
-    };
 }

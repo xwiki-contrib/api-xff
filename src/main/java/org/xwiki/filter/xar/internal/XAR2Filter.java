@@ -19,13 +19,24 @@
  */
 package org.xwiki.filter.xar.internal;
 
-import org.xwiki.xar.internal.model.XarClassPropertyModel;
+import org.xwiki.filter.event.model.WikiFarmFilter;
+import org.xwiki.filter.event.model.WikiClassFilter;
+import org.xwiki.filter.event.model.WikiClassPropertyFilter;
+import org.xwiki.filter.event.model.WikiFilter;
+import org.xwiki.filter.event.model.WikiObjectFilter;
+import org.xwiki.filter.event.model.WikiObjectPropertyFilter;
+import org.xwiki.filter.event.model.WikiSpaceFilter;
+import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
+import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
 
 /**
+ * All events supported by XAR module.
  * 
  * @version $Id$
  * @since 6.2M1
  */
-public class XARClassPropertyModel extends XarClassPropertyModel
+public interface XAR2Filter extends WikiFarmFilter, WikiFilter, WikiSpaceFilter, XWikiWikiDocumentFilter,
+    XWikiWikiAttachmentFilter, WikiClassFilter, WikiClassPropertyFilter, WikiObjectFilter, WikiObjectPropertyFilter
 {
+
 }

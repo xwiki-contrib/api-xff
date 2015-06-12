@@ -28,7 +28,7 @@ import java.util.Locale;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
-import org.xwiki.filter.xar.output.XAROutputProperties;
+import org.xwiki.filter.xar.output.XAR2OutputProperties;
 import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.output.FileOutputTarget;
@@ -40,17 +40,17 @@ import org.xwiki.xar.XarPackage;
  * @version $Id$
  * @since 6.2M1
  */
-public class XARWikiWriter implements Closeable
+public class XAR2WikiWriter implements Closeable
 {
     private final String name;
 
-    private final XAROutputProperties xarProperties;
+    private final XAR2OutputProperties xarProperties;
 
     private final ZipArchiveOutputStream zipStream;
 
     private XarPackage xarPackage = new XarPackage();
 
-    public XARWikiWriter(String name, XAROutputProperties xarProperties) throws FilterException
+    public XAR2WikiWriter(String name, XAR2OutputProperties xarProperties) throws FilterException
     {
         this.name = name;
         this.xarProperties = xarProperties;

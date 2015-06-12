@@ -29,8 +29,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.FilterEventParameters;
-import org.xwiki.filter.xar.internal.XARClassModel;
-import org.xwiki.filter.xar.internal.XARFilterUtils.EventParameter;
+import org.xwiki.filter.xar.internal.XAR2ClassModel;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
 import org.xwiki.filter.xar.internal.input.ClassPropertyReader.WikiClassProperty;
 import org.xwiki.filter.FilterException;
 
@@ -53,7 +53,7 @@ public class ClassReader extends AbstractReader implements XARXMLReader<ClassRea
 
         public Map<String, WikiClassProperty> properties = new LinkedHashMap<String, WikiClassProperty>();
 
-        public void send(XARInputFilter proxyFilter) throws FilterException
+        public void send(XAR2InputFilter proxyFilter) throws FilterException
         {
             proxyFilter.beginWikiClass(this.parameters);
 
@@ -83,12 +83,12 @@ public class ClassReader extends AbstractReader implements XARXMLReader<ClassRea
         for (xmlReader.nextTag(); xmlReader.isStartElement(); xmlReader.nextTag()) {
             String elementName = xmlReader.getLocalName();
 
-            if (wikiClass.name == null && XARClassModel.ELEMENT_NAME.equals(elementName)) {
+            if (wikiClass.name == null && XAR2ClassModel.ELEMENT_NAME.equals(elementName)) {
                 wikiClass.name = xmlReader.getElementText();
-            } else if (XARClassModel.CLASS_PARAMETERS.containsKey(elementName)) {
+            } else if (XAR2ClassModel.CLASS_PARAMETERS.containsKey(elementName)) {
                 String value = xmlReader.getElementText();
 
-                EventParameter parameter = XARClassModel.CLASS_PARAMETERS.get(elementName);
+                EventParameter parameter = XAR2ClassModel.CLASS_PARAMETERS.get(elementName);
 
                 if (parameter != null) {
                     Object wsValue = convert(parameter.type, value);

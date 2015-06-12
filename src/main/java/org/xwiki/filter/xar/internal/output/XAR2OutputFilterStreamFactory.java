@@ -17,18 +17,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar.internal.output;
 
-import org.xwiki.filter.event.extension.ExtensionFilter;
-import org.xwiki.filter.xar.internal.XARFilter;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.xwiki.component.annotation.Component;
+import org.xwiki.filter.output.AbstractBeanOutputFilterStreamFactory;
+import org.xwiki.filter.type.FilterStreamType;
+import org.xwiki.filter.xar.internal.XAR2Filter;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils;
+import org.xwiki.filter.xar.output.XAR2OutputProperties;
 
 /**
- * All events supported by XAR input module.
+ * Generate XAR package from FilterStream events.
  * 
  * @version $Id$
  * @since 6.2M1
  */
-public interface XARInputFilter extends XARFilter, ExtensionFilter
+@Component
+@Named(XAR2FilterUtils.ROLEHINT)
+@Singleton
+public class XAR2OutputFilterStreamFactory extends AbstractBeanOutputFilterStreamFactory<XAR2OutputProperties, XAR2Filter>
 {
+    public XAR2OutputFilterStreamFactory()
+    {
+        super(FilterStreamType.XWIKI_XAR_11);
 
+        setName("XAR output stream");
+        setDescription("Write XAR package from wiki events.");
+    }
 }

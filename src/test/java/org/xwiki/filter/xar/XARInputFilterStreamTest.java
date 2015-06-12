@@ -45,7 +45,7 @@ import org.xwiki.filter.output.OutputFilterStream;
 import org.xwiki.filter.output.OutputFilterStreamFactory;
 import org.xwiki.filter.output.StringWriterOutputTarget;
 import org.xwiki.filter.type.FilterStreamType;
-import org.xwiki.filter.xar.input.XARInputProperties;
+import org.xwiki.filter.xar.input.XAR2InputProperties;
 import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.EntityReferenceSet;
@@ -76,7 +76,7 @@ public class XARInputFilterStreamTest
         extensionPackager.generateExtensions();
     }
 
-    private void assertXML(String resource, XARInputProperties xarProperties) throws FilterException, IOException,
+    private void assertXML(String resource, XAR2InputProperties xarProperties) throws FilterException, IOException,
         ComponentLookupException
     {
         URL url = getClass().getResource("/xar/" + resource + ".output.xml");
@@ -85,7 +85,7 @@ public class XARInputFilterStreamTest
 
         expected = StringUtils.removeStart(expected, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n");
 
-        BeanInputFilterStreamFactory<XARInputProperties> inputFilterStreamFactory =
+        BeanInputFilterStreamFactory<XAR2InputProperties> inputFilterStreamFactory =
             this.mocker.getInstance(InputFilterStreamFactory.class, FilterStreamType.XWIKI_XAR_11.serialize());
         InputFilterStream inputFilterStream = inputFilterStreamFactory.createInputFilterStream(xarProperties);
 
@@ -109,7 +109,7 @@ public class XARInputFilterStreamTest
     @Test
     public void testSkipFirstDocument() throws FilterException, IOException, ComponentLookupException
     {
-        XARInputProperties xarProperties = new XARInputProperties();
+        XAR2InputProperties xarProperties = new XAR2InputProperties();
 
         xarProperties.setSource(new DefaultFileInputSource(extensionPackager.getExtensionFile(new ExtensionId("xar1",
             "1.0"))));
@@ -125,7 +125,7 @@ public class XARInputFilterStreamTest
     @Test
     public void testSkipLastSpace() throws FilterException, IOException, ComponentLookupException
     {
-        XARInputProperties xarProperties = new XARInputProperties();
+        XAR2InputProperties xarProperties = new XAR2InputProperties();
 
         xarProperties.setSource(new DefaultFileInputSource(extensionPackager.getExtensionFile(new ExtensionId("xar1",
             "1.0"))));

@@ -36,7 +36,7 @@ import org.xwiki.filter.FilterException;
 import org.xwiki.filter.event.model.WikiDocumentFilter;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
-import org.xwiki.filter.xar.input.XARInputProperties;
+import org.xwiki.filter.xar.input.XAR2InputProperties;
 import org.xwiki.logging.marker.TranslationMarker;
 import org.xwiki.xar.XarPackage;
 import org.xwiki.xar.internal.model.XarModel;
@@ -64,11 +64,11 @@ public class WikiReader
     @Inject
     private Logger logger;
 
-    private XARInputProperties properties;
+    private XAR2InputProperties properties;
 
     private XarPackage xarPackage = new XarPackage();
 
-    public void setProperties(XARInputProperties properties)
+    public void setProperties(XAR2InputProperties properties)
     {
         this.properties = properties;
 
@@ -80,7 +80,7 @@ public class WikiReader
         return this.xarPackage;
     }
 
-    public void read(Object filter, XARInputFilter proxyFilter) throws IOException,
+    public void read(Object filter, XAR2InputFilter proxyFilter) throws IOException,
         FilterException
     {
         InputStream stream;
@@ -109,7 +109,7 @@ public class WikiReader
         }
     }
 
-    public void read(InputStream stream, Object filter, XARInputFilter proxyFilter) throws IOException
+    public void read(InputStream stream, Object filter, XAR2InputFilter proxyFilter) throws IOException
     {
         ZipArchiveInputStream zis = new ZipArchiveInputStream(stream, "UTF-8", false);
 

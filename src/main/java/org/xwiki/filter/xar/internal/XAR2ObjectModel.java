@@ -19,36 +19,27 @@
  */
 package org.xwiki.filter.xar.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.xwiki.filter.event.model.WikiObjectFilter;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.xar.internal.model.XarObjectModel;
+
 /**
  * @version $Id$
  * @since 6.2M1
  */
-public final class XARFilterUtils
+public class XAR2ObjectModel extends XarObjectModel
 {
-    /**
-     * @version $Id$
-     * @since 6.2M1
-     */
-    public static class EventParameter
+    // Utils
+
+    public static final Map<String, EventParameter> OBJECT_PARAMETERS = new HashMap<String, EventParameter>()
     {
-        public String name;
-
-        public Class< ? > type;
-
-        public EventParameter(String name, Class< ? > type)
         {
-            this.name = name;
-            this.type = type;
+            put(ELEMENT_CLASSNAME, new EventParameter(WikiObjectFilter.PARAMETER_CLASS_REFERENCE));
+            put(ELEMENT_GUID, new EventParameter(WikiObjectFilter.PARAMETER_GUID));
+            put(ELEMENT_NUMBER, new EventParameter(WikiObjectFilter.PARAMETER_NUMBER, Integer.class));
         }
-
-        public EventParameter(String name)
-        {
-            this(name, String.class);
-        }
-    }
-
-    /**
-     * @since 6.2M1
-     */
-    public static final String ROLEHINT = "xwiki+xar/1.1";
+    };
 }

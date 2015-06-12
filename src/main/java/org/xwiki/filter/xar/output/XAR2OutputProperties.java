@@ -31,7 +31,7 @@ import org.xwiki.stability.Unstable;
  * @since 6.2M1
  */
 @Unstable
-public class XAROutputProperties extends XMLOutputProperties
+public class XAR2OutputProperties extends XMLOutputProperties
 {
     /**
      * @see #isPreserveVersion()

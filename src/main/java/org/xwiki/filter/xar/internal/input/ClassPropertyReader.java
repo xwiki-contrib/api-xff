@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.FilterEventParameters;
-import org.xwiki.filter.xar.internal.XARClassPropertyModel;
+import org.xwiki.filter.xar.internal.XAR2ClassPropertyModel;
 import org.xwiki.filter.FilterException;
 
 /**
@@ -49,7 +49,7 @@ public class ClassPropertyReader extends AbstractReader implements XARXMLReader<
 
         public Map<String, String> fields = new LinkedHashMap<String, String>();
 
-        public void send(XARInputFilter proxyFilter) throws FilterException
+        public void send(XAR2InputFilter proxyFilter) throws FilterException
         {
             proxyFilter.beginWikiClassProperty(this.name, this.type, this.parameters);
 
@@ -73,7 +73,7 @@ public class ClassPropertyReader extends AbstractReader implements XARXMLReader<
             String elementName = xmlReader.getLocalName();
             String value = xmlReader.getElementText();
 
-            if (elementName.equals(XARClassPropertyModel.ELEMENT_CLASSTYPE)) {
+            if (elementName.equals(XAR2ClassPropertyModel.ELEMENT_CLASSTYPE)) {
                 wikiClassProperty.type = value;
             } else {
                 wikiClassProperty.fields.put(elementName, value);

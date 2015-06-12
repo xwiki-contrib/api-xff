@@ -35,8 +35,8 @@ import org.xwiki.filter.input.AbstractBeanInputFilterStream;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
 import org.xwiki.filter.input.ReaderInputSource;
-import org.xwiki.filter.xar.input.XARInputProperties;
-import org.xwiki.filter.xar.internal.XARFilterUtils;
+import org.xwiki.filter.xar.input.XAR2InputProperties;
+import org.xwiki.filter.xar.internal.XAR2FilterUtils;
 import org.xwiki.filter.xml.input.SourceInputSource;
 
 /**
@@ -44,9 +44,9 @@ import org.xwiki.filter.xml.input.SourceInputSource;
  * @since 6.2M1
  */
 @Component
-@Named(XARFilterUtils.ROLEHINT)
+@Named(XAR2FilterUtils.ROLEHINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class XARInputFilterStream extends AbstractBeanInputFilterStream<XARInputProperties, XARInputFilter>
+public class XAR2InputFilterStream extends AbstractBeanInputFilterStream<XAR2InputProperties, XAR2InputFilter>
 {
     @Inject
     private Provider<WikiReader> wikiReaderProvider;
@@ -61,7 +61,7 @@ public class XARInputFilterStream extends AbstractBeanInputFilterStream<XARInput
     }
 
     @Override
-    protected void read(Object filter, XARInputFilter proxyFilter) throws FilterException
+    protected void read(Object filter, XAR2InputFilter proxyFilter) throws FilterException
     {
         InputSource inputSource = this.properties.getSource();
 
@@ -100,7 +100,7 @@ public class XARInputFilterStream extends AbstractBeanInputFilterStream<XARInput
         }
     }
 
-    private void readXAR(Object filter, XARInputFilter proxyFilter) throws FilterException
+    private void readXAR(Object filter, XAR2InputFilter proxyFilter) throws FilterException
     {
         WikiReader wikiReader = this.wikiReaderProvider.get();
         wikiReader.setProperties(this.properties);
@@ -112,7 +112,7 @@ public class XARInputFilterStream extends AbstractBeanInputFilterStream<XARInput
         }
     }
 
-    protected void readDocument(Object filter, XARInputFilter proxyFilter) throws FilterException
+    protected void readDocument(Object filter, XAR2InputFilter proxyFilter) throws FilterException
     {
         DocumentLocaleReader documentReader = documentLocaleReaderProvider.get();
         documentReader.setProperties(this.properties);

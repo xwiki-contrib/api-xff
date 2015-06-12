@@ -19,32 +19,16 @@
  */
 package org.xwiki.filter.xar.internal.input;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-import org.xwiki.component.annotation.Component;
-import org.xwiki.filter.input.AbstractBeanInputFilterStreamFactory;
-import org.xwiki.filter.type.FilterStreamType;
-import org.xwiki.filter.xar.input.XARInputProperties;
-import org.xwiki.filter.xar.internal.XARFilterUtils;
+import org.xwiki.filter.event.extension.ExtensionFilter;
+import org.xwiki.filter.xar.internal.XAR2Filter;
 
 /**
- * Generate events from XAR FilterStream package.
+ * All events supported by XAR input module.
  * 
  * @version $Id$
  * @since 6.2M1
  */
-@Component
-@Named(XARFilterUtils.ROLEHINT)
-@Singleton
-public class XARInputFilterStreamFactory extends
-    AbstractBeanInputFilterStreamFactory<XARInputProperties, XARInputFilter>
+public interface XAR2InputFilter extends XAR2Filter, ExtensionFilter
 {
-    public XARInputFilterStreamFactory()
-    {
-        super(FilterStreamType.XWIKI_XAR_11);
 
-        setName("XAR input stream");
-        setDescription("Generates wiki events from XAR package.");
-    }
 }
