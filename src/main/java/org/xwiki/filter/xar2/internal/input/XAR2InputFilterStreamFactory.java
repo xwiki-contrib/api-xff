@@ -17,46 +17,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar2.internal.input;
 
-import org.xwiki.model.reference.EntityReference;
-import org.xwiki.stability.Unstable;
-import org.xwiki.filter.FilterException;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.xwiki.component.annotation.Component;
+import org.xwiki.filter.input.AbstractBeanInputFilterStreamFactory;
+import org.xwiki.filter.type.FilterStreamType;
+import org.xwiki.filter.xar2.input.XAR2InputProperties;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
 
 /**
- * Used to indicate that the parsed entity should be skipped.
+ * Generate events from XAR FilterStream package.
  * 
  * @version $Id$
  * @since 6.2M1
  */
-@Unstable
-public class SkipEntityException extends FilterException
+@Component
+@Named(XAR2FilterUtils.ROLEHINT)
+@Singleton
+public class XAR2InputFilterStreamFactory extends
+    AbstractBeanInputFilterStreamFactory<XAR2InputProperties, XAR2InputFilter>
 {
-    /**
-     * Class version.
-     */
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * @see #getEntityReference()
-     */
-    private final EntityReference entityReference;
-
-    /**
-     * @param entityReference the skipped entity
-     */
-    public SkipEntityException(EntityReference entityReference)
+    public XAR2InputFilterStreamFactory()
     {
-        super("Skip " + entityReference);
+        super(FilterStreamType.XWIKI_XAR_11);
 
-        this.entityReference = entityReference;
-    }
-
-    /**
-     * @return the skipped entity
-     */
-    public EntityReference getEntityReference()
-    {
-        return this.entityReference;
+        setName("XAR input stream");
+        setDescription("Generates wiki events from XAR package.");
     }
 }

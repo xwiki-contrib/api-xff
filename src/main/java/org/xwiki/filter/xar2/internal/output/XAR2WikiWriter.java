@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.output;
+package org.xwiki.filter.xar2.internal.output;
 
 import java.io.Closeable;
 import java.io.File;
@@ -28,7 +28,7 @@ import java.util.Locale;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.output.CloseShieldOutputStream;
-import org.xwiki.filter.xar.output.XAR2OutputProperties;
+import org.xwiki.filter.xar2.output.XAR2OutputProperties;
 import org.xwiki.model.reference.LocalDocumentReference;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.output.FileOutputTarget;

@@ -17,13 +17,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal;
+package org.xwiki.filter.xar2.internal;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.xwiki.filter.event.model.WikiClassFilter;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils.EventParameter;
 import org.xwiki.xar.internal.model.XarClassModel;
 
 /**

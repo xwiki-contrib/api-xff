@@ -17,26 +17,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal;
-
-import org.xwiki.filter.event.model.WikiFarmFilter;
-import org.xwiki.filter.event.model.WikiClassFilter;
-import org.xwiki.filter.event.model.WikiClassPropertyFilter;
-import org.xwiki.filter.event.model.WikiFilter;
-import org.xwiki.filter.event.model.WikiObjectFilter;
-import org.xwiki.filter.event.model.WikiObjectPropertyFilter;
-import org.xwiki.filter.event.model.WikiSpaceFilter;
-import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
-import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
+package org.xwiki.filter.xar2.internal;
 
 /**
- * All events supported by XAR module.
- * 
  * @version $Id$
  * @since 6.2M1
  */
-public interface XAR2Filter extends WikiFarmFilter, WikiFilter, WikiSpaceFilter, XWikiWikiDocumentFilter,
-    XWikiWikiAttachmentFilter, WikiClassFilter, WikiClassPropertyFilter, WikiObjectFilter, WikiObjectPropertyFilter
+public final class XAR2FilterUtils
 {
+    /**
+     * @version $Id$
+     * @since 6.2M1
+     */
+    public static class EventParameter
+    {
+        public String name;
 
+        public Class< ? > type;
+
+        public EventParameter(String name, Class< ? > type)
+        {
+            this.name = name;
+            this.type = type;
+        }
+
+        public EventParameter(String name)
+        {
+            this(name, String.class);
+        }
+    }
+
+    /**
+     * @since 6.2M1
+     */
+    public static final String ROLEHINT = "xwiki+xar/1.1";
 }

@@ -18,7 +18,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar2.internal.input;
 
 import java.util.Date;
 import java.util.Locale;

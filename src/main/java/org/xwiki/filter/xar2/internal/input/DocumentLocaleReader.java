@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar2.internal.input;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,15 +37,15 @@ import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
-import org.xwiki.filter.xar.input.XAR2InputProperties;
-import org.xwiki.filter.xar.internal.XAR2AttachmentModel;
-import org.xwiki.filter.xar.internal.XAR2ClassModel;
-import org.xwiki.filter.xar.internal.XAR2DocumentModel;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
-import org.xwiki.filter.xar.internal.XAR2ObjectModel;
-import org.xwiki.filter.xar.internal.input.AttachmentReader.WikiAttachment;
-import org.xwiki.filter.xar.internal.input.ClassReader.WikiClass;
-import org.xwiki.filter.xar.internal.input.WikiObjectReader.WikiObject;
+import org.xwiki.filter.xar2.input.XAR2InputProperties;
+import org.xwiki.filter.xar2.internal.XAR2AttachmentModel;
+import org.xwiki.filter.xar2.internal.XAR2ClassModel;
+import org.xwiki.filter.xar2.internal.XAR2DocumentModel;
+import org.xwiki.filter.xar2.internal.XAR2ObjectModel;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.filter.xar2.internal.input.AttachmentReader.WikiAttachment;
+import org.xwiki.filter.xar2.internal.input.ClassReader.WikiClass;
+import org.xwiki.filter.xar2.internal.input.WikiObjectReader.WikiObject;
 import org.xwiki.filter.xml.internal.input.XMLInputFilterStreamUtils;
 import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.EntityReference;

@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar2.internal.input;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,9 +29,9 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.FilterEventParameters;
-import org.xwiki.filter.xar.internal.XAR2ClassModel;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
-import org.xwiki.filter.xar.internal.input.ClassPropertyReader.WikiClassProperty;
+import org.xwiki.filter.xar2.internal.XAR2ClassModel;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.filter.xar2.internal.input.ClassPropertyReader.WikiClassProperty;
 import org.xwiki.filter.FilterException;
 
 /**

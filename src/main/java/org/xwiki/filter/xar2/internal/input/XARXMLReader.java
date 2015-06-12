@@ -17,15 +17,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal;
+package org.xwiki.filter.xar2.internal.input;
 
-import org.xwiki.xar.internal.model.XarClassPropertyModel;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.xwiki.component.annotation.Role;
+import org.xwiki.filter.FilterException;
 
 /**
+ * Read XML to create an entity instance.
  * 
+ * @param <E> the type of instance to create
  * @version $Id$
  * @since 6.2M1
  */
-public class XAR2ClassPropertyModel extends XarClassPropertyModel
+@Role
+public interface XARXMLReader<E>
 {
+    /**
+     * @param xmlReader the XML reader
+     * @return the entity created from XML
+     * @throws XMLStreamException when failing to read XML
+     * @throws FilterException when failing to read XML
+     */
+    E read(XMLStreamReader xmlReader) throws XMLStreamException, FilterException;
 }

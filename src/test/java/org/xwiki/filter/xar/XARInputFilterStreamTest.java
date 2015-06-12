@@ -45,7 +45,7 @@ import org.xwiki.filter.output.OutputFilterStream;
 import org.xwiki.filter.output.OutputFilterStreamFactory;
 import org.xwiki.filter.output.StringWriterOutputTarget;
 import org.xwiki.filter.type.FilterStreamType;
-import org.xwiki.filter.xar.input.XAR2InputProperties;
+import org.xwiki.filter.xar2.input.XAR2InputProperties;
 import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.EntityReferenceSet;

@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.output;
+package org.xwiki.filter.xar2.output;
 
 import org.xwiki.filter.xml.output.XMLOutputProperties;
 import org.xwiki.properties.annotation.PropertyDescription;

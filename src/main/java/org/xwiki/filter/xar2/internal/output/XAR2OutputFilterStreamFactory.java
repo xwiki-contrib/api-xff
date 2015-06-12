@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.output;
+package org.xwiki.filter.xar2.internal.output;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -25,9 +25,9 @@ import javax.inject.Singleton;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.output.AbstractBeanOutputFilterStreamFactory;
 import org.xwiki.filter.type.FilterStreamType;
-import org.xwiki.filter.xar.internal.XAR2Filter;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils;
-import org.xwiki.filter.xar.output.XAR2OutputProperties;
+import org.xwiki.filter.xar2.internal.XAR2Filter;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
+import org.xwiki.filter.xar2.output.XAR2OutputProperties;
 
 /**
  * Generate XAR package from FilterStream events.

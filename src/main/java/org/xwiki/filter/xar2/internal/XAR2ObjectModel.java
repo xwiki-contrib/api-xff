@@ -17,14 +17,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal;
+package org.xwiki.filter.xar2.internal;
 
-import org.xwiki.xar.internal.model.XarObjectPropertyModel;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.xwiki.filter.event.model.WikiObjectFilter;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.xar.internal.model.XarObjectModel;
 
 /**
  * @version $Id$
  * @since 6.2M1
  */
-public class XAR2ObjectPropertyModel extends XarObjectPropertyModel
+public class XAR2ObjectModel extends XarObjectModel
 {
+    // Utils
+
+    public static final Map<String, EventParameter> OBJECT_PARAMETERS = new HashMap<String, EventParameter>()
+    {
+        {
+            put(ELEMENT_CLASSNAME, new EventParameter(WikiObjectFilter.PARAMETER_CLASS_REFERENCE));
+            put(ELEMENT_GUID, new EventParameter(WikiObjectFilter.PARAMETER_GUID));
+            put(ELEMENT_NUMBER, new EventParameter(WikiObjectFilter.PARAMETER_NUMBER, Integer.class));
+        }
+    };
 }

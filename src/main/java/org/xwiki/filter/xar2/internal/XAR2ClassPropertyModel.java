@@ -17,38 +17,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal;
+package org.xwiki.filter.xar2.internal;
+
+import org.xwiki.xar.internal.model.XarClassPropertyModel;
 
 /**
+ * 
  * @version $Id$
  * @since 6.2M1
  */
-public final class XAR2FilterUtils
+public class XAR2ClassPropertyModel extends XarClassPropertyModel
 {
-    /**
-     * @version $Id$
-     * @since 6.2M1
-     */
-    public static class EventParameter
-    {
-        public String name;
-
-        public Class< ? > type;
-
-        public EventParameter(String name, Class< ? > type)
-        {
-            this.name = name;
-            this.type = type;
-        }
-
-        public EventParameter(String name)
-        {
-            this(name, String.class);
-        }
-    }
-
-    /**
-     * @since 6.2M1
-     */
-    public static final String ROLEHINT = "xwiki+xar/1.1";
 }

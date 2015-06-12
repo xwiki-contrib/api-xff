@@ -17,19 +17,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.input;
+package org.xwiki.filter.xar2.internal.input;
 
-import java.io.ByteArrayInputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.inject.Singleton;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.commons.codec.binary.Base64;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.FilterEventParameters;
-import org.xwiki.filter.xar.internal.XAR2AttachmentModel;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils.EventParameter;
+import org.xwiki.filter.xar2.internal.XAR2ClassPropertyModel;
 import org.xwiki.filter.FilterException;
 
 /**
@@ -38,49 +37,54 @@ import org.xwiki.filter.FilterException;
  */
 @Component
 @Singleton
-public class AttachmentReader extends AbstractReader implements XARXMLReader<AttachmentReader.WikiAttachment>
+public class ClassPropertyReader extends AbstractReader implements XARXMLReader<ClassPropertyReader.WikiClassProperty>
 {
-    public static class WikiAttachment
+    public static class WikiClassProperty
     {
         public String name;
 
-        public byte[] content;
+        public String type;
 
         public FilterEventParameters parameters = new FilterEventParameters();
 
+        public Map<String, String> fields = new LinkedHashMap<String, String>();
+
         public void send(XAR2InputFilter proxyFilter) throws FilterException
         {
-            proxyFilter.onWikiAttachment(this.name, new ByteArrayInputStream(this.content),
-                Long.valueOf(this.content.length), this.parameters);
+            proxyFilter.beginWikiClassProperty(this.name, this.type, this.parameters);
+
+            for (Map.Entry<String, String> entry : this.fields.entrySet()) {
+                proxyFilter.onWikiClassPropertyField(entry.getKey(), entry.getValue(), FilterEventParameters.EMPTY);
+            }
+
+            proxyFilter.endWikiClassProperty(this.name, this.type, this.parameters);
+
         }
     }
 
     @Override
-    public WikiAttachment read(XMLStreamReader xmlReader) throws XMLStreamException, FilterException
+    public WikiClassProperty read(XMLStreamReader xmlReader) throws XMLStreamException, FilterException
     {
-        WikiAttachment wikiAttachment = new WikiAttachment();
+        WikiClassProperty wikiClassProperty = new WikiClassProperty();
+
+        wikiClassProperty.name = xmlReader.getLocalName();
 
         for (xmlReader.nextTag(); xmlReader.isStartElement(); xmlReader.nextTag()) {
             String elementName = xmlReader.getLocalName();
-
             String value = xmlReader.getElementText();
 
-            EventParameter parameter = XAR2AttachmentModel.ATTACHMENT_PARAMETERS.get(elementName);
-
-            if (parameter != null) {
-                Object wsValue = convert(parameter.type, value);
-                if (wsValue != null) {
-                    wikiAttachment.parameters.put(parameter.name, wsValue);
-                }
+            if (elementName.equals(XAR2ClassPropertyModel.ELEMENT_CLASSTYPE)) {
+                wikiClassProperty.type = value;
             } else {
-                if (XAR2AttachmentModel.ELEMENT_NAME.equals(elementName)) {
-                    wikiAttachment.name = value;
-                } else if (XAR2AttachmentModel.ELEMENT_CONTENT.equals(elementName)) {
-                    wikiAttachment.content = Base64.decodeBase64(value.getBytes());
-                }
+                wikiClassProperty.fields.put(elementName, value);
             }
         }
 
-        return wikiAttachment;
+        if (wikiClassProperty.type == null) {
+            throw new FilterException(String.format("No <classType> element found for property [%s]",
+                wikiClassProperty.name));
+        }
+
+        return wikiClassProperty;
     }
 }

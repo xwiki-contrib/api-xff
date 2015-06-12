@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar.internal.output;
+package org.xwiki.filter.xar2.internal.output;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,14 +43,14 @@ import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
 import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
 import org.xwiki.filter.output.AbstractBeanOutputFilterStream;
 import org.xwiki.filter.output.WriterOutputTarget;
-import org.xwiki.filter.xar.internal.XAR2AttachmentModel;
-import org.xwiki.filter.xar.internal.XAR2ClassModel;
-import org.xwiki.filter.xar.internal.XAR2ClassPropertyModel;
-import org.xwiki.filter.xar.internal.XAR2Filter;
-import org.xwiki.filter.xar.internal.XAR2ObjectModel;
-import org.xwiki.filter.xar.internal.XAR2ObjectPropertyModel;
-import org.xwiki.filter.xar.internal.XAR2FilterUtils;
-import org.xwiki.filter.xar.output.XAR2OutputProperties;
+import org.xwiki.filter.xar2.internal.XAR2AttachmentModel;
+import org.xwiki.filter.xar2.internal.XAR2ClassModel;
+import org.xwiki.filter.xar2.internal.XAR2ClassPropertyModel;
+import org.xwiki.filter.xar2.internal.XAR2Filter;
+import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
+import org.xwiki.filter.xar2.internal.XAR2ObjectModel;
+import org.xwiki.filter.xar2.internal.XAR2ObjectPropertyModel;
+import org.xwiki.filter.xar2.output.XAR2OutputProperties;
 import org.xwiki.filter.xml.internal.output.FilterStreamXMLStreamWriter;
 import org.xwiki.filter.xml.output.ResultOutputTarget;
 import org.xwiki.model.reference.EntityReference;
