@@ -24,8 +24,8 @@ import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.filter.input.AbstractBeanInputFilterStreamFactory;
-import org.xwiki.filter.type.FilterStreamType;
 import org.xwiki.filter.xar2.input.XAR2InputProperties;
+import org.xwiki.filter.xar2.internal.XAR2FilterStreamType;
 import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
 
 /**
@@ -42,9 +42,9 @@ public class XAR2InputFilterStreamFactory extends
 {
     public XAR2InputFilterStreamFactory()
     {
-        super(FilterStreamType.XWIKI_XAR_11);
+        super(XAR2FilterStreamType.XWIKI_XAR_20);
 
-        setName("XAR input stream");
-        setDescription("Generates wiki events from XAR package.");
+        setName("XAR2 input stream");
+        setDescription("Generates wiki events from XAR2 package.");
     }
 }

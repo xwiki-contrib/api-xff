@@ -98,26 +98,12 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <excludes>
-              org/xwiki/filter/xar/internal/XARAttachmentModel.java,
-              org/xwiki/filter/xar/internal/XARClassModel.java,
-              org/xwiki/filter/xar/internal/XARClassPropertyModel.java,
-              org/xwiki/filter/xar/internal/XARDocumentModel.java,
-              org/xwiki/filter/xar/internal/XARFilter.java,
-              org/xwiki/filter/xar/internal/XARFilterUtils.java,
-              org/xwiki/filter/xar/internal/XARObjectModel.java,
-              org/xwiki/filter/xar/internal/XARObjectPropertyModel.java,
-              org/xwiki/filter/xar/internal/input/AbstractReader.java,
-              org/xwiki/filter/xar/internal/input/AttachmentReader.java,
-              org/xwiki/filter/xar/internal/input/ClassPropertyReader.java,
-              org/xwiki/filter/xar/internal/input/ClassReader.java,
-              org/xwiki/filter/xar/internal/input/DocumentLocaleReader.java,
-              org/xwiki/filter/xar/internal/input/WikiObjectReader.java,
-              org/xwiki/filter/xar/internal/input/WikiReader.java,
-              org/xwiki/filter/xar/internal/input/XARInputFilterStream.java,
-              org/xwiki/filter/xar/internal/input/XARInputFilterStreamFactory.java,
-              org/xwiki/filter/xar/internal/output/XAROutputFilterStream.java,
-              org/xwiki/filter/xar/internal/output/XAROutputFilterStreamFactory.java,
-              org/xwiki/filter/xar/internal/output/XARWikiWriter.java
+              org/xwiki/filter/xar2/internal/XAR2Filter.java,
+              org/xwiki/filter/xar2/internal/XAR2FilterStreamType.java,
+              org/xwiki/filter/xar2/internal/XAR2FilterUtils.java,
+              org/xwiki/filter/xar2/internal/input/XAR2Reader.java,
+              org/xwiki/filter/xar2/internal/input/XAR2InputFilterStream.java,
+              org/xwiki/filter/xar2/internal/input/XAR2InputFilterStreamFactory.java
           </excludes>
         </configuration>
       </plugin>

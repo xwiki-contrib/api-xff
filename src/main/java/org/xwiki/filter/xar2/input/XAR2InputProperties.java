@@ -20,10 +20,6 @@
 package org.xwiki.filter.xar2.input;
 
 import org.xwiki.filter.xml.input.XMLInputProperties;
-import org.xwiki.model.reference.EntityReferenceSet;
-import org.xwiki.properties.annotation.PropertyDescription;
-import org.xwiki.properties.annotation.PropertyHidden;
-import org.xwiki.properties.annotation.PropertyName;
 import org.xwiki.stability.Unstable;
 
 /**
@@ -35,99 +31,5 @@ import org.xwiki.stability.Unstable;
 @Unstable
 public class XAR2InputProperties extends XMLInputProperties
 {
-    /**
-     * @see #getEntities()
-     */
-    private EntityReferenceSet entities;
 
-    /**
-     * @see #isWithHistory()
-     */
-    private boolean withHistory = true;
-
-    /**
-     * @see #isForceDocument()
-     */
-    private boolean forceDocument;
-
-    /**
-     * @see #isWithExtension()
-     */
-    private boolean withExtension = true;
-
-    /**
-     * @return The entities to take into account or skip
-     */
-    @PropertyName("Entities")
-    @PropertyDescription("The entities to take into account or skip")
-    // TODO: implement Converter for EntityReferenceSet
-    @PropertyHidden
-    public EntityReferenceSet getEntities()
-    {
-        return this.entities;
-    }
-
-    /**
-     * @param entities The entities to take into account or skip
-     */
-    public void setEntities(EntityReferenceSet entities)
-    {
-        this.entities = entities;
-    }
-
-    /**
-     * @return Indicate if events should be generated for history
-     */
-    @PropertyName("With history")
-    @PropertyDescription("Indicate if events should be generated for history")
-    public boolean isWithHistory()
-    {
-        return this.withHistory;
-    }
-
-    /**
-     * @param withHistory Indicate if events should be generated for history
-     */
-    public void setWithHistory(boolean withHistory)
-    {
-        this.withHistory = withHistory;
-    }
-
-    /**
-     * @return true if the input should be forced as document
-     */
-    @PropertyName("Force document")
-    @PropertyDescription("Force considering the input stream as a document")
-    public boolean isForceDocument()
-    {
-        return this.forceDocument;
-    }
-
-    /**
-     * @param forceDocument true if the input should be forced as document
-     */
-    public void setForceDocument(boolean forceDocument)
-    {
-        this.forceDocument = forceDocument;
-    }
-
-    /**
-     * @return true indicates if extension event should be generated if possible
-     * @since 6.2M1
-     */
-    @PropertyName("Indicates if extension event should be generated if possible")
-    @PropertyDescription("Indicates if extension event should be generated if possible")
-    public boolean isWithExtension()
-    {
-        return this.withExtension;
-    }
-
-    /**
-     * @param withExtension indicates if extension event should be generated if possible
-     * @since 6.2M1
-     */
-    public void setWithExtension(boolean withExtension)
-    {
-        this.withExtension = withExtension;
-    }
 }

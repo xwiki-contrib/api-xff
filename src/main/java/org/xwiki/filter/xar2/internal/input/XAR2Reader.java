@@ -23,51 +23,58 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.input.AbstractBeanInputFilterStream;
+import org.xwiki.filter.event.model.WikiDocumentFilter;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
-import org.xwiki.filter.input.ReaderInputSource;
 import org.xwiki.filter.xar2.input.XAR2InputProperties;
-import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
-import org.xwiki.filter.xml.input.SourceInputSource;
+import org.xwiki.logging.marker.TranslationMarker;
 
 /**
  * @version $Id$
  * @since 6.2M1
  */
-@Component
-@Named(XAR2FilterUtils.ROLEHINT)
+@Component(roles = XAR2Reader.class)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class XAR2InputFilterStream extends
-		AbstractBeanInputFilterStream<XAR2InputProperties, XAR2InputFilter> {
-	@Inject
-	private Provider<XAR2Reader> xar2ReaderProvider;
+public class XAR2Reader
+ {
+    @Inject
+    private Logger logger;
 
-	@Override
-	public void close() throws IOException {
-		this.properties.getSource().close();
-	}
+    private XAR2InputProperties properties;
 
-	@Override
-	protected void read(Object filter, XAR2InputFilter proxyFilter)
-			throws FilterException {
-		InputSource inputSource = this.properties.getSource();
+    public void setProperties(XAR2InputProperties properties)
+    {
+        this.properties = properties;
+    }
 
-		if (inputSource instanceof InputStreamInputSource) {
-			XAR2Reader xar2Reader = this.xar2ReaderProvider.get();
-			xar2Reader.read(filter, proxyFilter);
-		} else {
-			throw new FilterException(String.format(
-					"Unsupported input source of type [%s]",
-					inputSource.getClass()));
-		}
-	}
+    public void read(Object filter, XAR2InputFilter proxyFilter)
+    {    
+        InputStream stream;
+        InputSource source = this.properties.getSource();
+        if (source instanceof InputStreamInputSource) {
+            try {
+				stream = ((InputStreamInputSource) source).getInputStream();
+				readXAR2(stream, filter, proxyFilter);
+			} catch (IOException e) {
+	        	this.logger.error("Fail to read XAR2 file descriptor.", e);
+			}
+        } else {
+        	this.logger.error("Fail to read XAR2 file descriptor.");
+        }
+    }
+    private void readXAR2(InputStream stream,Object filter, XAR2InputFilter proxyFilter) throws IOException {
+        ZipArchiveInputStream zis = new ZipArchiveInputStream(stream, "UTF-8", false);
+        for (ZipArchiveEntry entry = zis.getNextZipEntry(); entry != null; entry = zis.getNextZipEntry()) {
+        	this.logger.info("Parsing file '" + entry.getName() + "'.");
+        }
+        zis.close();
+    }
 }

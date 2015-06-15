@@ -50,5 +50,5 @@ public final class XAR2FilterUtils
     /**
      * @since 6.2M1
      */
-    public static final String ROLEHINT = "xwiki+xar/1.1";
+    public static final String ROLEHINT = "xwiki+xar/2.0";
 }

@@ -17,22 +17,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar;
+package org.xwiki.filter.xar2.internal;
 
-import org.junit.runner.RunWith;
-import org.xwiki.filter.test.integration.FilterTestSuite;
-import org.xwiki.filter.test.integration.FilterTestSuite.Scope;
-import org.xwiki.test.annotation.AllComponents;
+import org.xwiki.filter.type.FilterStreamType;
+import org.xwiki.filter.type.SystemType;
+import org.xwiki.stability.Unstable;
 
 /**
- * Run all tests found in the classpath. These {@code *.test} files must follow the conventions described in
- * {@link org.xwiki.filter.test.integration.TestDataParser}.
- * 
+ * Combination of supported system and their data types.
+ *
  * @version $Id$
+ * @since 7.1
  */
-@RunWith(FilterTestSuite.class)
-@AllComponents
-@Scope("document")
-public class DocumentIntegrationTests
-{
+@Unstable
+public class XAR2FilterStreamType extends FilterStreamType {
+	/**
+	 * The XAR format.
+	 *
+	 * @since 7.1
+	 */
+	public static final FilterStreamType XWIKI_XAR_20 = new FilterStreamType(
+			SystemType.XWIKI, "xar", "2.0");
+
+	public XAR2FilterStreamType(SystemType type, String dataFormat,
+			String version) {
+		super(type, dataFormat, version);
+	}
+
+	public XAR2FilterStreamType(SystemType type, String dataFormat) {
+		super(type, dataFormat);
+	}
+
 }
