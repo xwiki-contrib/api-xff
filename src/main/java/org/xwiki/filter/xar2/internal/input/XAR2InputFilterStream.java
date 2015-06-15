@@ -20,13 +20,11 @@
 package org.xwiki.filter.xar2.internal.input;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
@@ -34,10 +32,8 @@ import org.xwiki.filter.FilterException;
 import org.xwiki.filter.input.AbstractBeanInputFilterStream;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
-import org.xwiki.filter.input.ReaderInputSource;
 import org.xwiki.filter.xar2.input.XAR2InputProperties;
 import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
-import org.xwiki.filter.xml.input.SourceInputSource;
 
 /**
  * @version $Id$
@@ -63,6 +59,7 @@ public class XAR2InputFilterStream extends
 
 		if (inputSource instanceof InputStreamInputSource) {
 			XAR2Reader xar2Reader = this.xar2ReaderProvider.get();
+			xar2Reader.setProperties(this.properties);
 			xar2Reader.read(filter, proxyFilter);
 		} else {
 			throw new FilterException(String.format(
