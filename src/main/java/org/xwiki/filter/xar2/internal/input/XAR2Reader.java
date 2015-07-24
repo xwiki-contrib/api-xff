@@ -22,6 +22,7 @@ package org.xwiki.filter.xar2.internal.input;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -96,13 +97,21 @@ public class XAR2Reader {
 					try {
 						proxyFilter.beginWiki(wikiName,
 								FilterEventParameters.EMPTY);
-						proxyFilter.beginWikiSpace(wikiName,
+						proxyFilter.beginWikiSpace(spaceName,
 								FilterEventParameters.EMPTY);
 						proxyFilter.beginWikiDocument(documentName,
 								FilterEventParameters.EMPTY);
+						proxyFilter.beginWikiDocumentLocale(Locale.ROOT,
+								FilterEventParameters.EMPTY);
+						proxyFilter.beginWikiDocumentRevision("1.1",
+								FilterEventParameters.EMPTY);
+						proxyFilter.endWikiDocumentRevision("1.1",
+								FilterEventParameters.EMPTY);
+						proxyFilter.endWikiDocumentLocale(Locale.ROOT,
+								FilterEventParameters.EMPTY);
 						proxyFilter.endWikiDocument(documentName,
 								FilterEventParameters.EMPTY);
-						proxyFilter.endWikiSpace(wikiName,
+						proxyFilter.endWikiSpace(spaceName,
 								FilterEventParameters.EMPTY);
 						proxyFilter.endWiki(wikiName,
 								FilterEventParameters.EMPTY);
