@@ -77,7 +77,6 @@ public class XAR2Reader {
 				false);
 		for (ZipArchiveEntry entry = zis.getNextZipEntry(); entry != null; entry = zis
 				.getNextZipEntry()) {
-			this.logger.info("Parsing file '" + entry.getName() + "'.");
 			if (!entry.isDirectory()) {
 				String path = entry.getName();
 				String[] pathElements = path.split("/");

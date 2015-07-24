@@ -1,0 +1,16 @@
+.#------------------------------------------------------------------------------
+.expect|filter+xml
+.#------------------------------------------------------------------------------
+<wiki name="xwiki">
+  <wikiSpace name="Space">
+    <wikiDocument name="Page">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+  </wikiSpace>
+</wiki>
+.#------------------------------------------------------------------------------
+.input|xwiki+xar/2.0
+.configuration.source=${{{extension.repository}}}/test1-1.0.xar
+.#------------------------------------------------------------------------------
