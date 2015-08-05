@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns="http://www.xwiki.org">
+  <className>Space.Page</className>
+  <property name="id" type="Number">
+    <value>42</value>
+  </property>
+</object>

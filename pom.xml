@@ -61,6 +61,11 @@
       <artifactId>xwiki-platform-xar</artifactId>
       <version>${project.version}</version>
     </dependency>
+	<dependency>
+		<groupId>org.xwiki.platform</groupId>
+		<artifactId>xwiki-platform-rest-model</artifactId>
+		<version>${project.version}</version>
+	</dependency>
 
     <!-- Test dependencies -->
     <dependency>

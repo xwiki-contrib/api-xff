@@ -19,26 +19,36 @@
  */
 package org.xwiki.filter.xar2.internal.input;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.event.model.WikiDocumentFilter;
+import org.xwiki.filter.input.FileInputSource;
 import org.xwiki.filter.input.InputSource;
-import org.xwiki.filter.input.InputStreamInputSource;
+import org.xwiki.filter.xar2.input.DocumentStack;
 import org.xwiki.filter.xar2.input.XAR2InputProperties;
-import org.xwiki.logging.marker.TranslationMarker;
+import org.xwiki.model.EntityType;
+import org.xwiki.model.reference.DocumentReference;
+import org.xwiki.model.reference.SpaceReference;
+import org.xwiki.rest.model.jaxb.Class;
+import org.xwiki.rest.model.jaxb.Page;
 
 /**
  * @version $Id$
@@ -57,12 +67,11 @@ public class XAR2Reader {
 	}
 
 	public void read(Object filter, XAR2InputFilter proxyFilter) {
-		InputStream stream;
 		InputSource source = this.properties.getSource();
-		if (source instanceof InputStreamInputSource) {
+		if (source instanceof FileInputSource) {
 			try {
-				stream = ((InputStreamInputSource) source).getInputStream();
-				readXAR2(stream, filter, proxyFilter);
+				parseXAR2File(((FileInputSource) source).getFile(), filter,
+						proxyFilter);
 			} catch (IOException e) {
 				this.logger.error("Fail to read XAR2 file descriptor.", e);
 			}
@@ -71,12 +80,124 @@ public class XAR2Reader {
 		}
 	}
 
-	private void readXAR2(InputStream stream, Object filter,
+	private DocumentReference getDocumentReferenceFromPath(String path) {
+		String[] pathElements = path.split("/");
+		String documentName = null, spaceName = null, wikiName = null;
+
+		wikiName = pathElements[0];
+		spaceName = pathElements[1];
+		documentName = pathElements[2];
+
+		return new DocumentReference(wikiName, spaceName, documentName);
+	}
+
+	private void addEntryToDocumentStack(DocumentStack documentStack,
+			ZipFile zf, ZipArchiveEntry entry) {
+		Path filePath = Paths.get(entry.getName());
+		if (filePath.endsWith("index.xml")) {
+			Page xPage = null;
+			try {
+				JAXBContext jc = JAXBContext.newInstance(Page.class);
+				Unmarshaller unmarshaller = jc.createUnmarshaller();
+				xPage = (Page) unmarshaller.unmarshal(zf.getInputStream(entry));
+			} catch (IOException e) {
+				String message = String.format("Cannot get stream from '%s'",
+						filePath.toString());
+				logger.error(message, e);
+			} catch (JAXBException e) {
+				String message = String.format(
+						"Unable to unmarshal a Page from '%s'",
+						filePath.toString());
+				logger.error(message, e);
+			}
+			documentStack.setxPage(xPage);
+		} else if (filePath.endsWith("class.xml")) {
+			Class xClass = null;
+			try {
+				JAXBContext jc = JAXBContext.newInstance(Page.class);
+				Unmarshaller unmarshaller = jc.createUnmarshaller();
+				xClass = (Class) unmarshaller.unmarshal(zf
+						.getInputStream(entry));
+			} catch (IOException e) {
+				String message = String.format("Cannot get stream from '%s'",
+						filePath.toString());
+				logger.error(message, e);
+			} catch (JAXBException e) {
+				String message = String.format(
+						"Unable to unmarshal a Class from '%s'",
+						filePath.toString());
+				logger.error(message, e);
+			}
+			documentStack.setxClass(xClass);
+
+		}
+	}
+
+	private void processDocumentStack(DocumentStack documentStack,
+			XAR2InputFilter proxyFilter) throws FilterException {
+		DocumentReference reference = documentStack.getReference();
+		String wikiName = reference.getWikiReference().getName();
+		List<SpaceReference> spaceReferencesList = reference
+				.getSpaceReferences();
+		String documentName = reference.getName();
+		proxyFilter.beginWiki(wikiName, FilterEventParameters.EMPTY);
+		for (SpaceReference spaceReference : spaceReferencesList) {
+			String spaceName = spaceReference.getName();
+			proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
+		}
+		proxyFilter
+				.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
+		proxyFilter.beginWikiDocumentLocale(Locale.ROOT,
+				FilterEventParameters.EMPTY);
+		proxyFilter.beginWikiDocumentRevision("1.1",
+				FilterEventParameters.EMPTY);
+		proxyFilter.endWikiDocumentRevision("1.1", FilterEventParameters.EMPTY);
+		proxyFilter.endWikiDocumentLocale(Locale.ROOT,
+				FilterEventParameters.EMPTY);
+		proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
+		for (SpaceReference spaceReference : spaceReferencesList) {
+			String spaceName = spaceReference.getName();
+			proxyFilter.endWikiSpace(spaceName, FilterEventParameters.EMPTY);
+		}
+		proxyFilter.endWiki(wikiName, FilterEventParameters.EMPTY);
+	}
+
+	private void parseXAR2File(File file, Object filter,
 			XAR2InputFilter proxyFilter) throws IOException {
-		ZipArchiveInputStream zis = new ZipArchiveInputStream(stream, "UTF-8",
-				false);
-		for (ZipArchiveEntry entry = zis.getNextZipEntry(); entry != null; entry = zis
-				.getNextZipEntry()) {
+		ZipFile zf = new ZipFile(file, "UTF-8");
+		DocumentReference previousDocumentReference = null;
+		DocumentStack currentDocumentStack = new DocumentStack();
+		Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+		for (ZipArchiveEntry entry = entries.nextElement(); entry != null; entry = entries
+				.nextElement()) {
+			DocumentReference currentDocumentReference = getDocumentReferenceFromPath(entry
+					.getName());
+			if (currentDocumentReference.equals(previousDocumentReference,
+					EntityType.DOCUMENT)) {
+				addEntryToDocumentStack(currentDocumentStack, zf, entry);
+			} else {
+				try {
+					processDocumentStack(currentDocumentStack, proxyFilter);
+				} catch (FilterException e) {
+					String message = String.format(
+							"Unable to process document stack '%s'",
+							currentDocumentReference);
+					logger.error(message, e);
+					e.printStackTrace();
+				}
+				currentDocumentStack = new DocumentStack();
+				currentDocumentStack.setReference(currentDocumentReference);
+				addEntryToDocumentStack(currentDocumentStack, zf, entry);
+			}
+		}
+	}
+
+	private void readXAR2(File file, Object filter, XAR2InputFilter proxyFilter)
+			throws IOException {
+		ZipFile zf = new ZipFile(file, "UTF-8");
+		Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+		for (ZipArchiveEntry entry = entries.nextElement(); entry != null; entry = entries
+				.nextElement()) {
 			if (!entry.isDirectory()) {
 				String path = entry.getName();
 				String[] pathElements = path.split("/");
@@ -120,9 +241,11 @@ public class XAR2Reader {
 								path);
 						logger.error(message, e);
 					}
+				} else if (filename.equals("class.xml")) {
+
 				}
 			}
 		}
-		zis.close();
+		zf.close();
 	}
 }

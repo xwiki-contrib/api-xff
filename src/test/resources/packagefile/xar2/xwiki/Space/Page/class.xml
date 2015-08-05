@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<class xmlns="http://www.xwiki.org">
+	<id>Space.Page</id>
+	<name>Space.Page</name>
+	<property name="answer" type="Number">
+		<attribute name="name" value="answer"/>
+		<attribute name="prettyName" value="Answer"/>
+		<attribute name="unmodifiable" value="0"/>
+		<attribute name="disabled" value="0"/>
+		<attribute name="size" value="30"/>
+		<attribute name="numberType" value="long"/>
+		<attribute name="customDisplay" value=""/>
+		<attribute name="number" value="1"/>
+		<attribute name="validationMessage" value=""/>
+		<attribute name="validationRegExp" value=""/>
+	</property>
+</class>
