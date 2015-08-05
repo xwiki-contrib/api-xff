@@ -4,32 +4,76 @@ import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.rest.model.jaxb.Class;
 import org.xwiki.rest.model.jaxb.Page;
 
-public class DocumentStack {
-	private DocumentReference reference;
-	private Page xPage;
-	private Class xClass;
+/**
+ * Aggregate all informations (class, attachments, objects, etc.) about a document page.
+ * 
+ * @version $Id$
+ * @since 7.1
+ *
+ */
+public class DocumentStack
+{
+    /**
+     * Reference of the current document.
+     */
+    private DocumentReference reference;
 
-	public Page getxPage() {
-		return xPage;
-	}
+    /**
+     * All information relative to the page (see Page JAX-B object from xwiki-platform-rest-model).
+     */
+    private Page xPage;
 
-	public void setxPage(Page xPage) {
-		this.xPage = xPage;
-	}
+    /**
+     * All information relative to the class (see Page JAX-B object from xwiki-platform-rest-model).
+     */
+    private Class xClass;
 
-	public Class getxClass() {
-		return xClass;
-	}
+    /**
+     * 
+     * @return a Page object relative to the current Document Stack
+     */
+    public Page getxPage()
+    {
+        return xPage;
+    }
 
-	public void setxClass(Class xClass) {
-		this.xClass = xClass;
-	}
+    /**
+     * @param xPage is a Page object (see JAX-B object from xwiki-platform-rest-model).
+     */
+    public void setxPage(Page xPage)
+    {
+        this.xPage = xPage;
+    }
 
-	public DocumentReference getReference() {
-		return reference;
-	}
+    /**
+     * @return a Class object relative to the current Document Stack.
+     */
+    public Class getxClass()
+    {
+        return xClass;
+    }
 
-	public void setReference(DocumentReference reference) {
-		this.reference = reference;
-	}
+    /**
+     * @param xClass is a Class object (see JAX-B object from xwiki-platform-rest-model).
+     */
+    public void setxClass(Class xClass)
+    {
+        this.xClass = xClass;
+    }
+
+    /**
+     * @return a DocumentReference relative to the current Document Stack.
+     */
+    public DocumentReference getReference()
+    {
+        return reference;
+    }
+
+    /**
+     * @param reference describes the reference of the current Document Stack.
+     */
+    public void setReference(DocumentReference reference)
+    {
+        this.reference = reference;
+    }
 }

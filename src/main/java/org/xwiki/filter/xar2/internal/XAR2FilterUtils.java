@@ -21,34 +21,51 @@ package org.xwiki.filter.xar2.internal;
 
 /**
  * @version $Id$
- * @since 6.2M1
+ * @since 7.1
  */
 public final class XAR2FilterUtils
 {
     /**
+     * @since 7.1
+     */
+    public static final String ROLEHINT = "xwiki+xar/2.0";
+
+    /**
      * @version $Id$
-     * @since 6.2M1
+     * @since 7.1
      */
     public static class EventParameter
     {
+        /**
+         * Name of the event parameter.
+         */
         public String name;
 
-        public Class< ? > type;
+        /**
+         * Type of the event parameter.
+         */
+        public Class<?> type;
 
-        public EventParameter(String name, Class< ? > type)
+        /**
+         * @param name is the name of the event parameter
+         * @param type is the type of the event parameter
+         */
+        public EventParameter(String name, Class<?> type)
         {
             this.name = name;
             this.type = type;
         }
 
+        /**
+         * @param name is the name of the event parameter
+         */
         public EventParameter(String name)
         {
             this(name, String.class);
         }
     }
 
-    /**
-     * @since 6.2M1
-     */
-    public static final String ROLEHINT = "xwiki+xar/2.0";
+    private XAR2FilterUtils()
+    {
+    }
 }

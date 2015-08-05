@@ -32,7 +32,7 @@ import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
  * Generate events from XAR FilterStream package.
  * 
  * @version $Id$
- * @since 6.2M1
+ * @since 7.1 
  */
 @Component
 @Named(XAR2FilterUtils.ROLEHINT)
@@ -40,6 +40,9 @@ import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
 public class XAR2InputFilterStreamFactory extends
     AbstractBeanInputFilterStreamFactory<XAR2InputProperties, XAR2InputFilter>
 {
+    /**
+     * Default constructor.
+     */
     public XAR2InputFilterStreamFactory()
     {
         super(XAR2FilterStreamType.XWIKI_XAR_20);

@@ -30,22 +30,32 @@ import org.xwiki.stability.Unstable;
  * @since 7.1
  */
 @Unstable
-public class XAR2FilterStreamType extends FilterStreamType {
-	/**
-	 * The XAR format.
-	 *
-	 * @since 7.1
-	 */
-	public static final FilterStreamType XWIKI_XAR_20 = new FilterStreamType(
-			SystemType.XWIKI, "xar", "2.0");
+public class XAR2FilterStreamType extends FilterStreamType
+{
+    /**
+     * The XAR format.
+     *
+     * @since 7.1
+     */
+    public static final FilterStreamType XWIKI_XAR_20 = new FilterStreamType(SystemType.XWIKI, "xar", "2.0");
 
-	public XAR2FilterStreamType(SystemType type, String dataFormat,
-			String version) {
-		super(type, dataFormat, version);
-	}
+    /**
+     * @param type is the kind of meta model (xwiki, mediawiki, confluence, etc.)
+     * @param dataFormat define in which format the data is
+     * @param version define which version of this format
+     */
+    public XAR2FilterStreamType(SystemType type, String dataFormat, String version)
+    {
+        super(type, dataFormat, version);
+    }
 
-	public XAR2FilterStreamType(SystemType type, String dataFormat) {
-		super(type, dataFormat);
-	}
+    /**
+     * @param type is the kind of meta model (xwiki, mediawiki, confluence, etc.)
+     * @param dataFormat define in which format the data is
+     */
+    public XAR2FilterStreamType(SystemType type, String dataFormat)
+    {
+        super(type, dataFormat);
+    }
 
 }

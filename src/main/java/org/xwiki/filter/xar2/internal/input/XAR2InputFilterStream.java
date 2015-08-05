@@ -37,34 +37,33 @@ import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
 
 /**
  * @version $Id$
- * @since 6.2M1
+ * @since 7.1
  */
 @Component
 @Named(XAR2FilterUtils.ROLEHINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class XAR2InputFilterStream extends
-		AbstractBeanInputFilterStream<XAR2InputProperties, XAR2InputFilter> {
-	@Inject
-	private Provider<XAR2Reader> xar2ReaderProvider;
+public class XAR2InputFilterStream extends AbstractBeanInputFilterStream<XAR2InputProperties, XAR2InputFilter>
+{
+    @Inject
+    private Provider<XAR2Reader> xar2ReaderProvider;
 
-	@Override
-	public void close() throws IOException {
-		this.properties.getSource().close();
-	}
+    @Override
+    public void close() throws IOException
+    {
+        this.properties.getSource().close();
+    }
 
-	@Override
-	protected void read(Object filter, XAR2InputFilter proxyFilter)
-			throws FilterException {
-		InputSource inputSource = this.properties.getSource();
+    @Override
+    protected void read(Object filter, XAR2InputFilter proxyFilter) throws FilterException
+    {
+        InputSource inputSource = this.properties.getSource();
 
-		if (inputSource instanceof InputStreamInputSource) {
-			XAR2Reader xar2Reader = this.xar2ReaderProvider.get();
-			xar2Reader.setProperties(this.properties);
-			xar2Reader.read(filter, proxyFilter);
-		} else {
-			throw new FilterException(String.format(
-					"Unsupported input source of type [%s]",
-					inputSource.getClass()));
-		}
-	}
+        if (inputSource instanceof InputStreamInputSource) {
+            XAR2Reader xar2Reader = this.xar2ReaderProvider.get();
+            xar2Reader.setProperties(this.properties);
+            xar2Reader.read(filter, proxyFilter);
+        } else {
+            throw new FilterException(String.format("Unsupported input source of type [%s]", inputSource.getClass()));
+        }
+    }
 }
