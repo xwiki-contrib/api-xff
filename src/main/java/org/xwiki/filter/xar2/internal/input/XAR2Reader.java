@@ -44,7 +44,9 @@ import org.xwiki.filter.input.FileInputSource;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.xar2.input.DocumentStack;
 import org.xwiki.filter.xar2.input.XAR2InputProperties;
+import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.DocumentReference;
+import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.SpaceReference;
 import org.xwiki.rest.model.jaxb.Class;
 import org.xwiki.rest.model.jaxb.Page;
@@ -58,6 +60,7 @@ import org.xwiki.rest.model.jaxb.Page;
 public class XAR2Reader
 {
     private static final String DEFAULT_DOCUMENT_REVISION = "1.1";
+
     /**
      * Logger to report errors, warnings, etc.
      */
@@ -102,9 +105,9 @@ public class XAR2Reader
     private DocumentReference getDocumentReferenceFromPath(String path)
     {
         String[] pathElements = path.split("/");
-        String documentName = null;
-        String spaceName = null;
         String wikiName = null;
+        String spaceName = null;
+        String documentName = null;
 
         wikiName = pathElements[0];
         spaceName = pathElements[1];
@@ -151,24 +154,21 @@ public class XAR2Reader
     private void processDocumentStack(DocumentStack documentStack, XAR2InputFilter proxyFilter) throws FilterException
     {
         DocumentReference reference = documentStack.getReference();
-        String wikiName = reference.getWikiReference().getName();
-        List<SpaceReference> spaceReferencesList = reference.getSpaceReferences();
-        String documentName = reference.getName();
+        EntityReference wikiReference = reference.extractReference(EntityType.WIKI);
+        String wikiName = wikiReference.getName();
+        EntityReference spaceReference = reference.extractReference(EntityType.SPACE);
+        String spaceName = spaceReference.getName();
+        EntityReference documentReference = reference.extractReference(EntityType.DOCUMENT);
+        String documentName = documentReference.getName();
         proxyFilter.beginWiki(wikiName, FilterEventParameters.EMPTY);
-        for (SpaceReference spaceReference : spaceReferencesList) {
-            String spaceName = spaceReference.getName();
-            proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
-        }
+        proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
         proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
         proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
         proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
-        for (SpaceReference spaceReference : spaceReferencesList) {
-            String spaceName = spaceReference.getName();
-            proxyFilter.endWikiSpace(spaceName, FilterEventParameters.EMPTY);
-        }
+        proxyFilter.endWikiSpace(spaceName, FilterEventParameters.EMPTY);
         proxyFilter.endWiki(wikiName, FilterEventParameters.EMPTY);
     }
 
@@ -178,15 +178,17 @@ public class XAR2Reader
         DocumentReference previousDocumentReference = null;
         DocumentStack currentDocumentStack = new DocumentStack();
         Enumeration<ZipArchiveEntry> entries = zf.getEntries();
-        for (ZipArchiveEntry entry = entries.nextElement(); entry != null; entry = entries.nextElement()) {
+        while(entries.hasMoreElements()) {
+            ZipArchiveEntry entry = entries.nextElement();
             DocumentReference currentDocumentReference = getDocumentReferenceFromPath(entry.getName());
-            if (currentDocumentReference.equals(previousDocumentReference)) {
+            currentDocumentStack.setReference(currentDocumentReference);
+            if (currentDocumentReference.equals(previousDocumentReference) || previousDocumentReference == null) {
                 addEntryToDocumentStack(currentDocumentStack, zf, entry);
             } else {
                 try {
                     processDocumentStack(currentDocumentStack, proxyFilter);
                 } catch (FilterException e) {
-                    String message = String.format("Unable to process document stack '%s'", currentDocumentReference);
+                    String message = String.format("Unable to process document stack '%s'", currentDocumentReference.getName());
                     logger.error(message, e);
                     e.printStackTrace();
                 }
@@ -194,51 +196,14 @@ public class XAR2Reader
                 currentDocumentStack.setReference(currentDocumentReference);
                 addEntryToDocumentStack(currentDocumentStack, zf, entry);
             }
+            previousDocumentReference = currentDocumentReference;
+        }
+        try {
+            processDocumentStack(currentDocumentStack, proxyFilter);
+        } catch (FilterException e) {
+            String message = String.format("Unable to process last document stack '%s'", currentDocumentStack.getReference().getName());
+            logger.error(message, e);
+            e.printStackTrace();
         }
     }
-/*
-    private void readXAR2(File file, Object filter, XAR2InputFilter proxyFilter) throws IOException
-    {
-        ZipFile zf = new ZipFile(file, "UTF-8");
-        Enumeration<ZipArchiveEntry> entries = zf.getEntries();
-        for (ZipArchiveEntry entry = entries.nextElement(); entry != null; entry = entries.nextElement()) {
-            if (!entry.isDirectory()) {
-                String path = entry.getName();
-                String[] pathElements = path.split("/");
-                int length = pathElements.length;
-                String filename = pathElements[length - 1];
-                if (filename.endsWith("index.xml")) {
-                    String documentName = null, spaceName = null, wikiName = null;
-                    if (length >= 2) {
-                        documentName = pathElements[length - 2];
-                    }
-                    if (length >= 3) {
-                        spaceName = pathElements[length - 3];
-                    }
-                    if (length >= 4) {
-                        wikiName = pathElements[length - 4];
-                    }
-                    try {
-                        proxyFilter.beginWiki(wikiName, FilterEventParameters.EMPTY);
-                        proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
-                        proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
-                        proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
-                        proxyFilter.beginWikiDocumentRevision("1.1", FilterEventParameters.EMPTY);
-                        proxyFilter.endWikiDocumentRevision("1.1", FilterEventParameters.EMPTY);
-                        proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
-                        proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
-                        proxyFilter.endWikiSpace(spaceName, FilterEventParameters.EMPTY);
-                        proxyFilter.endWiki(wikiName, FilterEventParameters.EMPTY);
-                    } catch (FilterException e) {
-                        String message = String.format("Problem with the import of the file '%s'.", path);
-                        logger.error(message, e);
-                    }
-                } else if (filename.equals("class.xml")) {
-
-                }
-            }
-        }
-        zf.close();
-    }
-    */
 }
