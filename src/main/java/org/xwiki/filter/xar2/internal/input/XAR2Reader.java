@@ -159,15 +159,15 @@ public class XAR2Reader
         }
     }
 
-    private void processDocumentStack(DocumentStack documentStack, XAR2InputFilter proxyFilter) throws FilterException
+    private void preProcessDocumentStack(DocumentStack documentStack, XAR2InputFilter proxyFilter, boolean last)
+        throws FilterException
     {
         DocumentReference reference = documentStack.getReference();
         EntityReference wikiReference = reference.extractReference(EntityType.WIKI);
         String wikiName = wikiReference.getName();
         EntityReference spaceReference = reference.extractReference(EntityType.SPACE);
         String spaceName = spaceReference.getName();
-        EntityReference documentReference = reference.extractReference(EntityType.DOCUMENT);
-        String documentName = documentReference.getName();
+
         // If we're going to change space, close the previous space first
         if (!spaceName.equals(previousSpace) && previousSpace != null) {
             proxyFilter.endWikiSpace(previousSpace, FilterEventParameters.EMPTY);
@@ -184,53 +184,74 @@ public class XAR2Reader
         if (!spaceName.equals(previousSpace)) {
             proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
         }
-        proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
-        proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
-        proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
-        proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
-        proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
-        proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
+    }
+
+    private void postProcessDocumentStack(DocumentStack documentStack, XAR2InputFilter proxyFilter, boolean last)
+        throws FilterException
+    {
+        DocumentReference reference = documentStack.getReference();
+        EntityReference wikiReference = reference.extractReference(EntityType.WIKI);
+        String wikiName = wikiReference.getName();
+        EntityReference spaceReference = reference.extractReference(EntityType.SPACE);
+        String spaceName = spaceReference.getName();
+
         previousWiki = wikiName;
         previousSpace = spaceName;
+        if (last) {
+            proxyFilter.endWikiSpace(previousSpace, FilterEventParameters.EMPTY);
+            proxyFilter.endWiki(previousWiki, FilterEventParameters.EMPTY);
+        }
+    }
+
+    private void processDocumentStack(DocumentStack documentStack, XAR2InputFilter proxyFilter, boolean last)
+    {
+        DocumentReference reference = documentStack.getReference();
+        EntityReference documentReference = reference.extractReference(EntityType.DOCUMENT);
+        String documentName = documentReference.getName();
+
+        try {
+            preProcessDocumentStack(documentStack, proxyFilter, last);
+
+            proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
+            proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
+            proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
+            proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
+            proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
+            proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
+
+            postProcessDocumentStack(documentStack, proxyFilter, last);
+        } catch (FilterException e) {
+            String message = String.format("Unable to process document stack '%s'", reference.getName());
+            logger.error(message, e);
+            e.printStackTrace();
+        }
     }
 
     private void parseXAR2File(File file, Object filter, XAR2InputFilter proxyFilter) throws IOException
     {
         ZipFile zf = new ZipFile(file, "UTF-8");
         DocumentReference previousDocumentReference = null;
-        DocumentStack currentDocumentStack = new DocumentStack();
+        DocumentStack currentDocumentStack = null;
         Enumeration<ZipArchiveEntry> entries = zf.getEntries();
+
         while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
+            boolean hasMore = entries.hasMoreElements();
             DocumentReference currentDocumentReference = getDocumentReferenceFromPath(entry.getName());
-            if (currentDocumentReference.equals(previousDocumentReference) || previousDocumentReference == null) {
-                currentDocumentStack.setReference(currentDocumentReference);
-                addEntryToDocumentStack(currentDocumentStack, zf, entry);
-            } else {
-                try {
-                    processDocumentStack(currentDocumentStack, proxyFilter);
-                } catch (FilterException e) {
-                    String message =
-                        String.format("Unable to process document stack '%s'", currentDocumentReference.getName());
-                    logger.error(message, e);
-                    e.printStackTrace();
+            if (!currentDocumentReference.equals(previousDocumentReference)) {
+                if (currentDocumentStack != null) {
+                    processDocumentStack(currentDocumentStack, proxyFilter, !hasMore);
                 }
-                currentDocumentStack = new DocumentStack();
-                currentDocumentStack.setReference(currentDocumentReference);
-                addEntryToDocumentStack(currentDocumentStack, zf, entry);
+                if (hasMore) {
+                    currentDocumentStack = new DocumentStack();
+                    currentDocumentStack.setReference(currentDocumentReference);
+                }
+            }
+            addEntryToDocumentStack(currentDocumentStack, zf, entry);
+            if (!hasMore) {
+                processDocumentStack(currentDocumentStack, proxyFilter, !hasMore);
             }
             previousDocumentReference = currentDocumentReference;
-        }
-        try {
-            processDocumentStack(currentDocumentStack, proxyFilter);
-            proxyFilter.endWikiSpace(previousSpace, FilterEventParameters.EMPTY);
-            proxyFilter.endWiki(previousWiki, FilterEventParameters.EMPTY);
-        } catch (FilterException e) {
-            String message =
-                String.format("Unable to process last document stack '%s'", currentDocumentStack.getReference()
-                    .getName());
-            logger.error(message, e);
-            e.printStackTrace();
         }
     }
 }

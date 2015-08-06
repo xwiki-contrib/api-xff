@@ -38,7 +38,7 @@ import org.xwiki.filter.test.integration.FilterTestSuite.Scope;
 @RunWith(FilterTestSuite.class)
 @AllComponents
 @Scope("xar2")
-public class XARIntegrationTest
+public class XAR2IntegrationTest
 {
     @BeforeClass
     public static void beforeClass() throws Exception
