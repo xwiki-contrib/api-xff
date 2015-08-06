@@ -17,7 +17,9 @@
   <wikiSpace name="Space">
     <wikiDocument name="Page">
       <wikiDocumentLocale>
-        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+        <wikiDocumentRevision revision="1.1">
+          <wikiClass></wikiClass>
+        </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
   </wikiSpace>

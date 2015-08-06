@@ -215,6 +215,10 @@ public class XAR2Reader
             proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
             proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
             proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
+            if (documentStack.getxClass() != null) {
+                proxyFilter.beginWikiClass(FilterEventParameters.EMPTY);
+                proxyFilter.endWikiClass(FilterEventParameters.EMPTY);
+            }
             proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
             proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
             proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
