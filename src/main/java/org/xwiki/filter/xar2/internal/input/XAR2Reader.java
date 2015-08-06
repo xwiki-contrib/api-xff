@@ -48,6 +48,7 @@ import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.rest.model.jaxb.Class;
 import org.xwiki.rest.model.jaxb.Page;
+import org.xwiki.rest.model.jaxb.Property;
 
 /**
  * @version $Id$
@@ -215,8 +216,15 @@ public class XAR2Reader
             proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
             proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
             proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
-            if (documentStack.getxClass() != null) {
+            Class xClass = documentStack.getxClass();
+            if (xClass != null) {
                 proxyFilter.beginWikiClass(FilterEventParameters.EMPTY);
+                for (Property property : xClass.getProperties()) {
+                    proxyFilter.beginWikiClassProperty(property.getName(), property.getType(),
+                        FilterEventParameters.EMPTY);
+                    proxyFilter.endWikiClassProperty(property.getName(), property.getType(),
+                        FilterEventParameters.EMPTY);
+                }
                 proxyFilter.endWikiClass(FilterEventParameters.EMPTY);
             }
             proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);

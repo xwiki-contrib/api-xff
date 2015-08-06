@@ -18,7 +18,9 @@
     <wikiDocument name="Page">
       <wikiDocumentLocale>
         <wikiDocumentRevision revision="1.1">
-          <wikiClass></wikiClass>
+          <wikiClass>
+            <wikiClassProperty name="answer" type="Number"></wikiClassProperty>
+          </wikiClass>
         </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
