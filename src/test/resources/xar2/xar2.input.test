@@ -2,6 +2,18 @@
 .expect|filter+xml
 .#------------------------------------------------------------------------------
 <wiki name="xwiki">
+  <wikiSpace name="MySpace">
+    <wikiDocument name="MyPage1">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+    <wikiDocument name="MyPage2">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+  </wikiSpace>
   <wikiSpace name="Space">
     <wikiDocument name="Page">
       <wikiDocumentLocale>

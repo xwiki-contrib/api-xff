@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -47,7 +46,6 @@ import org.xwiki.filter.xar2.input.XAR2InputProperties;
 import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
-import org.xwiki.model.reference.SpaceReference;
 import org.xwiki.rest.model.jaxb.Class;
 import org.xwiki.rest.model.jaxb.Page;
 
@@ -71,6 +69,16 @@ public class XAR2Reader
      * Properties of the reader.
      */
     private XAR2InputProperties properties;
+
+    /**
+     * Keep track of the current opened wiki to avoid to send beginWiki all the time.
+     */
+    private String previousWiki;
+
+    /**
+     * Keep track of the current opened space to avoid to send beginWikiSpace all the time.
+     */
+    private String previousSpace;
 
     /**
      * Set the properties before launching the reader.
@@ -160,16 +168,30 @@ public class XAR2Reader
         String spaceName = spaceReference.getName();
         EntityReference documentReference = reference.extractReference(EntityType.DOCUMENT);
         String documentName = documentReference.getName();
-        proxyFilter.beginWiki(wikiName, FilterEventParameters.EMPTY);
-        proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
+        // If we're going to change space, close the previous space first
+        if (!spaceName.equals(previousSpace) && previousSpace != null) {
+            proxyFilter.endWikiSpace(previousSpace, FilterEventParameters.EMPTY);
+        }
+        // If we're going to change wiki, close the previous wiki first
+        if (!wikiName.equals(previousWiki) && previousWiki != null) {
+            proxyFilter.endWiki(previousWiki, FilterEventParameters.EMPTY);
+        }
+        // Open a new wiki if previous one is different
+        if (!wikiName.equals(previousWiki)) {
+            proxyFilter.beginWiki(wikiName, FilterEventParameters.EMPTY);
+        }
+        // Open a new space if previous one is different
+        if (!spaceName.equals(previousSpace)) {
+            proxyFilter.beginWikiSpace(spaceName, FilterEventParameters.EMPTY);
+        }
         proxyFilter.beginWikiDocument(documentName, FilterEventParameters.EMPTY);
         proxyFilter.beginWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
         proxyFilter.beginWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocumentRevision(DEFAULT_DOCUMENT_REVISION, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocumentLocale(Locale.ROOT, FilterEventParameters.EMPTY);
         proxyFilter.endWikiDocument(documentName, FilterEventParameters.EMPTY);
-        proxyFilter.endWikiSpace(spaceName, FilterEventParameters.EMPTY);
-        proxyFilter.endWiki(wikiName, FilterEventParameters.EMPTY);
+        previousWiki = wikiName;
+        previousSpace = spaceName;
     }
 
     private void parseXAR2File(File file, Object filter, XAR2InputFilter proxyFilter) throws IOException
@@ -178,17 +200,18 @@ public class XAR2Reader
         DocumentReference previousDocumentReference = null;
         DocumentStack currentDocumentStack = new DocumentStack();
         Enumeration<ZipArchiveEntry> entries = zf.getEntries();
-        while(entries.hasMoreElements()) {
+        while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
             DocumentReference currentDocumentReference = getDocumentReferenceFromPath(entry.getName());
-            currentDocumentStack.setReference(currentDocumentReference);
             if (currentDocumentReference.equals(previousDocumentReference) || previousDocumentReference == null) {
+                currentDocumentStack.setReference(currentDocumentReference);
                 addEntryToDocumentStack(currentDocumentStack, zf, entry);
             } else {
                 try {
                     processDocumentStack(currentDocumentStack, proxyFilter);
                 } catch (FilterException e) {
-                    String message = String.format("Unable to process document stack '%s'", currentDocumentReference.getName());
+                    String message =
+                        String.format("Unable to process document stack '%s'", currentDocumentReference.getName());
                     logger.error(message, e);
                     e.printStackTrace();
                 }
@@ -200,8 +223,12 @@ public class XAR2Reader
         }
         try {
             processDocumentStack(currentDocumentStack, proxyFilter);
+            proxyFilter.endWikiSpace(previousSpace, FilterEventParameters.EMPTY);
+            proxyFilter.endWiki(previousWiki, FilterEventParameters.EMPTY);
         } catch (FilterException e) {
-            String message = String.format("Unable to process last document stack '%s'", currentDocumentStack.getReference().getName());
+            String message =
+                String.format("Unable to process last document stack '%s'", currentDocumentStack.getReference()
+                    .getName());
             logger.error(message, e);
             e.printStackTrace();
         }
