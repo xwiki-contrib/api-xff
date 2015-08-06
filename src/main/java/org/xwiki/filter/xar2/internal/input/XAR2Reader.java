@@ -46,6 +46,7 @@ import org.xwiki.filter.xar2.input.XAR2InputProperties;
 import org.xwiki.model.EntityType;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
+import org.xwiki.rest.model.jaxb.Attribute;
 import org.xwiki.rest.model.jaxb.Class;
 import org.xwiki.rest.model.jaxb.Page;
 import org.xwiki.rest.model.jaxb.Property;
@@ -222,6 +223,10 @@ public class XAR2Reader
                 for (Property property : xClass.getProperties()) {
                     proxyFilter.beginWikiClassProperty(property.getName(), property.getType(),
                         FilterEventParameters.EMPTY);
+                    for (Attribute attribute : property.getAttributes()) {
+                        proxyFilter.onWikiClassPropertyField(attribute.getName(), attribute.getValue(),
+                            FilterEventParameters.EMPTY);
+                    }
                     proxyFilter.endWikiClassProperty(property.getName(), property.getType(),
                         FilterEventParameters.EMPTY);
                 }

@@ -19,7 +19,18 @@
       <wikiDocumentLocale>
         <wikiDocumentRevision revision="1.1">
           <wikiClass>
-            <wikiClassProperty name="answer" type="Number"></wikiClassProperty>
+            <wikiClassProperty name="answer" type="Number">
+              <wikiClassPropertyField name="name" value="answer"></wikiClassPropertyField>
+              <wikiClassPropertyField name="prettyName" value="Answer"></wikiClassPropertyField>
+              <wikiClassPropertyField name="unmodifiable" value="0"></wikiClassPropertyField>
+              <wikiClassPropertyField name="disabled" value="0"></wikiClassPropertyField>
+              <wikiClassPropertyField name="size" value="30"></wikiClassPropertyField>
+              <wikiClassPropertyField name="numberType" value="long"></wikiClassPropertyField>
+              <wikiClassPropertyField name="customDisplay" value=""></wikiClassPropertyField>
+              <wikiClassPropertyField name="number" value="1"></wikiClassPropertyField>
+              <wikiClassPropertyField name="validationMessage" value=""></wikiClassPropertyField>
+              <wikiClassPropertyField name="validationRegExp" value=""></wikiClassPropertyField>
+            </wikiClassProperty>
           </wikiClass>
         </wikiDocumentRevision>
       </wikiDocumentLocale>
