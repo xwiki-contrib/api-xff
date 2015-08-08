@@ -5,12 +5,30 @@
   <wikiSpace name="MySpace">
     <wikiDocument name="MyPage1">
       <wikiDocumentLocale>
-        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+        <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a new page</string>
+              </entry>
+            </parameters>
+          </p>
+        </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
     <wikiDocument name="MyPage2">
       <wikiDocumentLocale>
-        <wikiDocumentRevision revision="1.1"></wikiDocumentRevision>
+        <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a new page</string>
+              </entry>
+            </parameters>
+          </p>
+        </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
   </wikiSpace>
@@ -18,6 +36,14 @@
     <wikiDocument name="Page">
       <wikiDocumentLocale>
         <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a new page</string>
+              </entry>
+            </parameters>
+          </p>
           <wikiClass>
             <wikiClassProperty name="answer" type="Number">
               <wikiClassPropertyField name="name" value="answer"></wikiClassPropertyField>
