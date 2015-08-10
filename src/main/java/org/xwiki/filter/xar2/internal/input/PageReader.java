@@ -71,6 +71,11 @@ public class PageReader extends AbstractReader
     private Path previousPath;
 
     /**
+     * Retain the last attachment in order to close and reinit if the current attachment is a new one.
+     */
+    private Path previousAttachmentPath;
+
+    /**
      * Retain the last class in order to close and reinit if the current class is a new one.
      */
     private Path previousClassPath;
@@ -81,12 +86,17 @@ public class PageReader extends AbstractReader
     private Path previousObjectPath;
 
     /**
+     * Child reader for attachments.
+     */
+    private AttachmentReader attachmentReader;
+
+    /**
      * Child reader for class.
      */
     private ClassReader classReader;
 
     /**
-     * Child reader for object.
+     * Child reader for objects.
      */
     private ObjectReader objectReader;
 
@@ -114,6 +124,7 @@ public class PageReader extends AbstractReader
     public PageReader(Object filter, XAR2InputFilter proxyFilter)
     {
         super(filter, proxyFilter);
+        this.attachmentReader = new AttachmentReader(filter, proxyFilter);
         this.classReader = new ClassReader(filter, proxyFilter);
         this.objectReader = new ObjectReader(filter, proxyFilter);
     }
@@ -122,6 +133,7 @@ public class PageReader extends AbstractReader
     {
         this.reference = null;
         this.previousPath = null;
+        this.previousAttachmentPath = null;
         this.previousClassPath = null;
         this.previousObjectPath = null;
         this.xPage = new Page();
@@ -175,6 +187,13 @@ public class PageReader extends AbstractReader
         this.proxyFilter.beginWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
     }
 
+    private void routeAttachment(Path path, InputStream inputStream) throws FilterException
+    {
+        this.attachmentReader.open(path, this.reference, inputStream);
+        this.attachmentReader.route(path, inputStream);
+        this.previousAttachmentPath = path;
+    }
+
     private void routeClass(Path path, InputStream inputStream) throws FilterException
     {
         Path classPath = path.subpath(0, 5);
@@ -194,7 +213,7 @@ public class PageReader extends AbstractReader
         this.previousClassPath = classPath;
     }
 
-    private void routeObjects(Path path, InputStream inputStream) throws FilterException
+    private void routeObject(Path path, InputStream inputStream) throws FilterException
     {
         Path objectPath = path.subpath(0, 6);
         if (!objectPath.equals(this.previousObjectPath)) {
@@ -217,7 +236,12 @@ public class PageReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         Path subPath = path.subpath(0, 4);
-        if (subPath.endsWith("class")) {
+        if (subPath.endsWith("attachments")) {
+            if (!subPath.equals(this.previousPath)) {
+                this.closeChilds();
+            }
+            this.routeAttachment(path, inputStream);
+        } else if (subPath.endsWith("class")) {
             if (!subPath.equals(this.previousPath)) {
                 this.closeChilds();
             }
@@ -226,13 +250,14 @@ public class PageReader extends AbstractReader
             if (!subPath.equals(this.previousPath)) {
                 this.closeChilds();
             }
-            this.routeObjects(path, inputStream);
+            this.routeObject(path, inputStream);
         }
         this.previousPath = subPath;
     }
 
     private void closeChilds() throws FilterException
     {
+        this.attachmentReader.close();
         this.classReader.close();
         this.objectReader.close();
     }

@@ -44,6 +44,11 @@
               </entry>
             </parameters>
           </p>
+          <wikiAttachment name="logo.png" size="2285">
+            <p>
+              <content></content>
+            </p>
+          </wikiAttachment>
           <wikiClass>
             <wikiClassProperty name="answer" type="Number">
               <wikiClassPropertyField name="name" value="answer"></wikiClassPropertyField>
