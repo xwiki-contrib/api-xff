@@ -38,9 +38,9 @@ import org.xwiki.rest.model.jaxb.Space;
 public class SpaceReader extends AbstractReader
 {
     /**
-     * Name of the file to describe a wiki.
+     * Name of the file to describe a space.
      */
-    static final String SPACE_FILENAME = "space.xml";
+    static final String SPACE_FILENAME = "__space.xml";
 
     /**
      * Reference to the current space.
@@ -48,14 +48,14 @@ public class SpaceReader extends AbstractReader
     private SpaceReference reference;
 
     /**
-     * Retain the last page path in order to close and reinit if the current page is a new one.
-     */
-    private Path previousPagePath;
-
-    /**
      * Contain the model of a space (see xwiki-platform-rest-model).
      */
     private Space xSpace = new Space();
+
+    /**
+     * Retain the last page path in order to close and reinit if the current page is a new one.
+     */
+    private Path previousPagePath;
 
     /**
      * Child reader for page.
@@ -74,6 +74,13 @@ public class SpaceReader extends AbstractReader
         this.pageReader = new PageReader(filter, proxyFilter);
     }
 
+    private void reset()
+    {
+        this.reference = null;
+        this.xSpace = new Space();
+        this.previousPagePath = null;
+    }
+
     private void setReference(String spaceName, EntityReference parentReference)
     {
         this.reference = new SpaceReference(spaceName, parentReference);
@@ -82,6 +89,7 @@ public class SpaceReader extends AbstractReader
     @Override
     public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
     {
+        this.reset();
         if (inputStream != null) {
             this.xSpace = (Space) this.unmarshal(inputStream, Space.class);
         }
@@ -90,27 +98,27 @@ public class SpaceReader extends AbstractReader
             spaceName = path.getName(1).toString();
         }
         this.setReference(spaceName, parentReference);
-        proxyFilter.beginWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
+        this.proxyFilter.beginWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
     }
 
     @Override
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         Path pagePath = path.subpath(0, 3);
-        if (!pagePath.equals(previousPagePath)) {
-            if (previousPagePath != null) {
-                pageReader.close();
+        if (!pagePath.equals(this.previousPagePath)) {
+            if (this.previousPagePath != null) {
+                this.pageReader.close();
             }
             if (path.endsWith(PageReader.PAGE_FILENAME) && path.getNameCount() == 4) {
-                pageReader.open(path, this.reference, inputStream);
+                this.pageReader.open(path, this.reference, inputStream);
             } else {
-                pageReader.open(path, this.reference, null);
-                pageReader.route(path, inputStream);
+                this.pageReader.open(path, this.reference, null);
+                this.pageReader.route(path, inputStream);
             }
         } else {
-            pageReader.route(path, inputStream);
+            this.pageReader.route(path, inputStream);
         }
-        previousPagePath = pagePath;
+        this.previousPagePath = pagePath;
     }
 
     @Override
@@ -118,9 +126,8 @@ public class SpaceReader extends AbstractReader
     {
         this.pageReader.close();
         if (this.reference != null) {
-            proxyFilter.endWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
+            this.proxyFilter.endWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
         }
-
-        this.previousPagePath = null;
+        this.reset();
     }
 }

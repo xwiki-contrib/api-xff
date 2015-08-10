@@ -58,6 +58,9 @@
               <wikiClassPropertyField name="validationRegExp" value=""></wikiClassPropertyField>
             </wikiClassProperty>
           </wikiClass>
+          <wikiObject name="Space.Page[0]">
+            <wikiObjectProperty name="answer" value="42"></wikiObjectProperty>
+          </wikiObject>
         </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>

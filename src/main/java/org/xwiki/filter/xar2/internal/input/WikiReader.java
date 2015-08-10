@@ -40,7 +40,7 @@ public class WikiReader extends AbstractReader
     /**
      * Name of the file to describe a wiki.
      */
-    static final String WIKI_FILENAME = "wiki.xml";
+    static final String WIKI_FILENAME = "__wiki.xml";
 
     /**
      * Reference to the current wiki.
@@ -48,14 +48,14 @@ public class WikiReader extends AbstractReader
     private WikiReference reference;
 
     /**
-     * Retain the last space path in order to close and reinit if the current space is a new one.
-     */
-    private Path previousSpacePath;
-
-    /**
      * Contain the model of a wiki (see xwiki-platform-rest-model).
      */
     private Wiki xWiki = new Wiki();
+
+    /**
+     * Retain the last space path in order to close and reinit if the current space is a new one.
+     */
+    private Path previousSpacePath;
 
     /**
      * Child reader for spaces.
@@ -74,6 +74,13 @@ public class WikiReader extends AbstractReader
         this.spaceReader = new SpaceReader(filter, proxyFilter);
     }
 
+    private void reset()
+    {
+        this.reference = null;
+        this.xWiki = new Wiki();
+        this.previousSpacePath = null;
+    }
+
     private void setReference(String wikiName)
     {
         this.reference = new WikiReference(wikiName);
@@ -82,6 +89,7 @@ public class WikiReader extends AbstractReader
     @Override
     public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
     {
+        this.reset();
         if (inputStream != null) {
             this.xWiki = (Wiki) this.unmarshal(inputStream, Wiki.class);
         }
@@ -90,27 +98,27 @@ public class WikiReader extends AbstractReader
             wikiName = path.getName(0).toString();
         }
         this.setReference(wikiName);
-        proxyFilter.beginWiki(this.reference.getName(), FilterEventParameters.EMPTY);
+        this.proxyFilter.beginWiki(this.reference.getName(), FilterEventParameters.EMPTY);
     }
 
     @Override
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         Path spacePath = path.subpath(0, 2);
-        if (!spacePath.equals(previousSpacePath)) {
-            if (previousSpacePath != null) {
-                spaceReader.close();
+        if (!spacePath.equals(this.previousSpacePath)) {
+            if (this.previousSpacePath != null) {
+                this.spaceReader.close();
             }
             if (path.endsWith(SpaceReader.SPACE_FILENAME) && path.getNameCount() == 3) {
-                spaceReader.open(path, this.reference, inputStream);
+                this.spaceReader.open(path, this.reference, inputStream);
             } else {
-                spaceReader.open(path, this.reference, null);
-                spaceReader.route(path, inputStream);
+                this.spaceReader.open(path, this.reference, null);
+                this.spaceReader.route(path, inputStream);
             }
         } else {
-            spaceReader.route(path, inputStream);
+            this.spaceReader.route(path, inputStream);
         }
-        previousSpacePath = spacePath;
+        this.previousSpacePath = spacePath;
     }
 
     @Override
@@ -118,9 +126,8 @@ public class WikiReader extends AbstractReader
     {
         this.spaceReader.close();
         if (this.reference != null) {
-            proxyFilter.endWiki(this.reference.getName(), FilterEventParameters.EMPTY);
+            this.proxyFilter.endWiki(this.reference.getName(), FilterEventParameters.EMPTY);
         }
-
-        this.previousSpacePath = null;
+        this.reset();
     }
 }

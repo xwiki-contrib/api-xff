@@ -41,9 +41,9 @@ import org.xwiki.xar.internal.model.XarDocumentModel;
 public class PageReader extends AbstractReader
 {
     /**
-     * Name of the file to describe a wiki.
+     * Name of the file to describe a page.
      */
-    static final String PAGE_FILENAME = "page.xml";
+    static final String PAGE_FILENAME = "__page.xml";
 
     /**
      * The used locale for Document Locale.
@@ -61,19 +61,34 @@ public class PageReader extends AbstractReader
     private DocumentReference reference;
 
     /**
-     * Retain the last page class in order to close and reinit if the current class is a new one.
-     */
-    private Path previousClassPath;
-
-    /**
      * Contain the model of a page (see xwiki-platform-rest-model).
      */
     private Page xPage = new Page();
 
     /**
+     * Retain the last global path in the page in order to close class, objects or attachments before opening another.
+     */
+    private Path previousPath;
+
+    /**
+     * Retain the last class in order to close and reinit if the current class is a new one.
+     */
+    private Path previousClassPath;
+
+    /**
+     * Retain the last object in order to close and reinit if the current object is a new one.
+     */
+    private Path previousObjectPath;
+
+    /**
      * Child reader for class.
      */
     private ClassReader classReader;
+
+    /**
+     * Child reader for object.
+     */
+    private ObjectReader objectReader;
 
     /**
      * Parameters to send to the current document.
@@ -100,6 +115,19 @@ public class PageReader extends AbstractReader
     {
         super(filter, proxyFilter);
         this.classReader = new ClassReader(filter, proxyFilter);
+        this.objectReader = new ObjectReader(filter, proxyFilter);
+    }
+
+    private void reset()
+    {
+        this.reference = null;
+        this.previousPath = null;
+        this.previousClassPath = null;
+        this.previousObjectPath = null;
+        this.xPage = new Page();
+        this.parameters = FilterEventParameters.EMPTY;
+        this.parametersLocale = FilterEventParameters.EMPTY;
+        this.parametersRevision = FilterEventParameters.EMPTY;
     }
 
     private void setReference(String spaceName, EntityReference parentReference)
@@ -130,6 +158,7 @@ public class PageReader extends AbstractReader
     @Override
     public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
     {
+        this.reset();
         if (inputStream != null) {
             this.xPage = (Page) this.unmarshal(inputStream, Page.class);
         }
@@ -141,28 +170,47 @@ public class PageReader extends AbstractReader
         this.parameters = this.parseParameters();
         this.parametersLocale = this.parseParametersLocale();
         this.parametersRevision = parseParametersRevision();
-        proxyFilter.beginWikiDocument(this.reference.getName(), this.parameters);
-        proxyFilter.beginWikiDocumentLocale(DEFAULT_LOCALE, this.parametersLocale);
-        proxyFilter.beginWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
+        this.proxyFilter.beginWikiDocument(this.reference.getName(), this.parameters);
+        this.proxyFilter.beginWikiDocumentLocale(DEFAULT_LOCALE, this.parametersLocale);
+        this.proxyFilter.beginWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
     }
 
     private void routeClass(Path path, InputStream inputStream) throws FilterException
     {
         Path classPath = path.subpath(0, 5);
-        if (!classPath.equals(previousClassPath)) {
-            if (previousClassPath != null) {
-                classReader.close();
+        if (!classPath.equals(this.previousClassPath)) {
+            if (this.previousClassPath != null) {
+                this.classReader.close();
             }
             if (path.endsWith(ClassReader.CLASS_FILENAME) && path.getNameCount() == 5) {
-                classReader.open(path, this.reference, inputStream);
+                this.classReader.open(path, this.reference, inputStream);
             } else {
-                classReader.open(path, this.reference, null);
-                classReader.route(path, inputStream);
+                this.classReader.open(path, this.reference, null);
+                this.classReader.route(path, inputStream);
             }
         } else {
-            classReader.route(path, inputStream);
+            this.classReader.route(path, inputStream);
         }
-        previousClassPath = classPath;
+        this.previousClassPath = classPath;
+    }
+
+    private void routeObjects(Path path, InputStream inputStream) throws FilterException
+    {
+        Path objectPath = path.subpath(0, 6);
+        if (!objectPath.equals(this.previousObjectPath)) {
+            if (this.previousObjectPath != null) {
+                this.objectReader.close();
+            }
+            if (path.endsWith(ObjectReader.OBJECT_FILENAME) && path.getNameCount() == 7) {
+                this.objectReader.open(path, this.reference, inputStream);
+            } else {
+                this.objectReader.open(path, this.reference, null);
+                this.objectReader.route(path, inputStream);
+            }
+        } else {
+            this.objectReader.route(path, inputStream);
+        }
+        this.previousObjectPath = objectPath;
     }
 
     @Override
@@ -170,20 +218,34 @@ public class PageReader extends AbstractReader
     {
         Path subPath = path.subpath(0, 4);
         if (subPath.endsWith("class")) {
+            if (!subPath.equals(this.previousPath)) {
+                this.closeChilds();
+            }
             this.routeClass(path, inputStream);
+        } else if (subPath.endsWith("objects")) {
+            if (!subPath.equals(this.previousPath)) {
+                this.closeChilds();
+            }
+            this.routeObjects(path, inputStream);
         }
+        this.previousPath = subPath;
+    }
+
+    private void closeChilds() throws FilterException
+    {
+        this.classReader.close();
+        this.objectReader.close();
     }
 
     @Override
     public void close() throws FilterException
     {
-        this.classReader.close();
+        this.closeChilds();
         if (this.reference != null) {
-            proxyFilter.endWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
-            proxyFilter.endWikiDocumentLocale(DEFAULT_LOCALE, this.parametersLocale);
-            proxyFilter.endWikiDocument(this.reference.getName(), this.parameters);
+            this.proxyFilter.endWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
+            this.proxyFilter.endWikiDocumentLocale(DEFAULT_LOCALE, this.parametersLocale);
+            this.proxyFilter.endWikiDocument(this.reference.getName(), this.parameters);
         }
-
-        previousClassPath = null;
+        this.reset();
     }
 }
