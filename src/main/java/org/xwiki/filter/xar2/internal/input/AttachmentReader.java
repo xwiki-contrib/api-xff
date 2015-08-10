@@ -71,8 +71,9 @@ public class AttachmentReader extends AbstractReader
         this.reference = new AttachmentReference(attachmentName, (DocumentReference) parentReference);
     }
 
-    public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
+    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
+        this.reset();
         String attachmentName = path.getFileName().toString();
         this.setReference(attachmentName, parentReference);
     }
@@ -80,18 +81,18 @@ public class AttachmentReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-
         byte[] bytes;
+        this.init(path, null, parentReference);
         try {
             bytes = IOUtils.toByteArray(inputStream);
             // TODO: Why do we need length if we use an InputStream?
             this.proxyFilter.onWikiAttachment(this.reference.getName(), inputStream, Long.valueOf(bytes.length),
                 this.parameters);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            String message = String.format("Error in writing '%s'.", this.reference.getName());
+            throw new FilterException(message, e);
         }
-
+        this.finish();
     }
 
     @Override

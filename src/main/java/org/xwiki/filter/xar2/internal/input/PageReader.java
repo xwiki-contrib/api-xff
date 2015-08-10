@@ -83,11 +83,6 @@ public class PageReader extends AbstractReader
     private Path previousPath;
 
     /**
-     * Retain the last attachment in order to close and reinit if the current attachment is a new one.
-     */
-    private Path previousAttachmentPath;
-
-    /**
      * Retain the last class in order to close and reinit if the current class is a new one.
      */
     private Path previousClassPath;
@@ -145,7 +140,6 @@ public class PageReader extends AbstractReader
     {
         this.reference = null;
         this.previousPath = null;
-        this.previousAttachmentPath = null;
         this.previousClassPath = null;
         this.previousObjectPath = null;
         this.xPage = new Page();
@@ -204,7 +198,7 @@ public class PageReader extends AbstractReader
         this.started = true;
     }
 
-    private void readMetadata(Path path, InputStream inputStream) throws FilterException
+    private void routeMetadata(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
         if (filename.startsWith("content.")) {
@@ -215,13 +209,6 @@ public class PageReader extends AbstractReader
                 e.printStackTrace();
             }
         }
-    }
-
-    private void routeAttachment(Path path, InputStream inputStream) throws FilterException
-    {
-        this.attachmentReader.open(path, this.reference, inputStream);
-        this.attachmentReader.route(path, inputStream, null);
-        this.previousAttachmentPath = path;
     }
 
     private void routeClass(Path path, InputStream inputStream) throws FilterException
@@ -279,7 +266,7 @@ public class PageReader extends AbstractReader
         if (path.endsWith(PageReader.PAGE_FILENAME)) {
             this.init(path, inputStream, parentReference);
         } else if (pageSubPath.endsWith("_metadata")) {
-            this.readMetadata(path, inputStream);
+            this.routeMetadata(path, inputStream);
         } else {
             // If the page has not been initialized, initializes it with only the path
             if (this.reference == null) {
@@ -291,7 +278,7 @@ public class PageReader extends AbstractReader
             }
 
             if (pageSubPath.endsWith("attachments")) {
-                this.routeAttachment(path, inputStream);
+                this.attachmentReader.route(path, inputStream, this.reference);
             } else if (pageSubPath.endsWith("class")) {
                 this.routeClass(path, inputStream);
             } else if (pageSubPath.endsWith("objects")) {

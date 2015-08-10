@@ -45,7 +45,12 @@
               </entry>
             </parameters>
           </p>
-          <wikiAttachment name="logo.png" size="2285">
+          <wikiAttachment name="logo1.png" size="2285">
+            <p>
+              <content></content>
+            </p>
+          </wikiAttachment>
+          <wikiAttachment name="logo2.png" size="2285">
             <p>
               <content></content>
             </p>
