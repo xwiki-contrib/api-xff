@@ -27,7 +27,6 @@ import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xar2.input.AbstractReader;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.SpaceReference;
-import org.xwiki.model.reference.WikiReference;
 import org.xwiki.rest.model.jaxb.Space;
 
 /**

@@ -19,10 +19,12 @@
  */
 package org.xwiki.filter.xar2.internal.input;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Locale;
 
+import org.apache.commons.io.IOUtils;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xar2.input.AbstractReader;
@@ -178,7 +180,7 @@ public class PageReader extends AbstractReader
         return params;
     }
 
-    public void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
@@ -189,16 +191,30 @@ public class PageReader extends AbstractReader
             pageName = path.getName(2).toString();
         }
         this.setReference(pageName, parentReference);
+    }
+
+    private void start() throws FilterException
+    {
         this.parameters = this.parseParameters();
         this.parametersLocale = this.parseParametersLocale();
         this.parametersRevision = parseParametersRevision();
-    }
-    
-    private void start() throws FilterException {
         this.proxyFilter.beginWikiDocument(this.reference.getName(), this.parameters);
         this.proxyFilter.beginWikiDocumentLocale(DEFAULT_LOCALE, this.parametersLocale);
         this.proxyFilter.beginWikiDocumentRevision(DEFAULT_REVISION, this.parametersRevision);
         this.started = true;
+    }
+
+    private void readMetadata(Path path, InputStream inputStream) throws FilterException
+    {
+        String filename = path.getFileName().toString();
+        if (filename.startsWith("content.")) {
+            try {
+                this.xPage.setContent(IOUtils.toString(inputStream));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 
     private void routeAttachment(Path path, InputStream inputStream) throws FilterException
@@ -250,13 +266,20 @@ public class PageReader extends AbstractReader
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         Path pagePath = path.subpath(0, 3);
-        // Close previous space before starting a new one
-        if (!pagePath.equals(this.previousPagePath)) {
-            this.finish();
+        Path pageSubPath = path.subpath(0, 4);
+
+        // Close previous page and sub-paths before starting a new one
+        if (!pageSubPath.equals(this.previousPath)) {
+            this.finishChilds();
+            if (!pagePath.equals(this.previousPagePath)) {
+                this.finish();
+            }
         }
         // Parse files relative to page or reroute them to the PageReader
         if (path.endsWith(PageReader.PAGE_FILENAME)) {
             this.init(path, inputStream, parentReference);
+        } else if (pageSubPath.endsWith("_metadata")) {
+            this.readMetadata(path, inputStream);
         } else {
             // If the page has not been initialized, initializes it with only the path
             if (this.reference == null) {
@@ -267,29 +290,19 @@ public class PageReader extends AbstractReader
                 this.start();
             }
 
-            Path subPath = path.subpath(0, 4);
-            if (subPath.endsWith("attachments")) {
-                if (!subPath.equals(this.previousPath)) {
-                    this.closeChilds();
-                }
+            if (pageSubPath.endsWith("attachments")) {
                 this.routeAttachment(path, inputStream);
-            } else if (subPath.endsWith("class")) {
-                if (!subPath.equals(this.previousPath)) {
-                    this.closeChilds();
-                }
+            } else if (pageSubPath.endsWith("class")) {
                 this.routeClass(path, inputStream);
-            } else if (subPath.endsWith("objects")) {
-                if (!subPath.equals(this.previousPath)) {
-                    this.closeChilds();
-                }
+            } else if (pageSubPath.endsWith("objects")) {
                 this.routeObject(path, inputStream);
             }
-            this.previousPath = subPath;
+            this.previousPath = pageSubPath;
         }
         this.previousPagePath = pagePath;
     }
 
-    private void closeChilds() throws FilterException
+    private void finishChilds() throws FilterException
     {
         this.attachmentReader.finish();
         this.classReader.finish();
@@ -299,7 +312,7 @@ public class PageReader extends AbstractReader
     @Override
     public void finish() throws FilterException
     {
-        this.closeChilds();
+        this.finishChilds();
         if (this.reference != null) {
             if (!this.started) {
                 this.start();

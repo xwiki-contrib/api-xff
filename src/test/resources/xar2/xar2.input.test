@@ -40,7 +40,8 @@
             <parameters>
               <entry>
                 <string>content</string>
-                <string>This is a new page</string>
+                <string>This is a more powerful content.
+</string>
               </entry>
             </parameters>
           </p>
