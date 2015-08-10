@@ -95,7 +95,6 @@ public class ClassReader extends AbstractReader
         }
     }
 
-    @Override
     public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
     {
         this.reset();
@@ -107,13 +106,13 @@ public class ClassReader extends AbstractReader
     }
 
     @Override
-    public void route(Path path, InputStream inputStream) throws FilterException
+    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         // TODO: Route paths
     }
 
     @Override
-    public void close() throws FilterException
+    public void finish() throws FilterException
     {
         if (this.reference != null) {
             filterProperties();

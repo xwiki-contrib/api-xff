@@ -97,31 +97,14 @@ public class XAR2Reader
         WikiReader wikiReader = new WikiReader(filter, proxyFilter);
         Enumeration<? extends ZipEntry> entries = zf.entries();
 
-        Path previousWikiPath = null;
-        Path wikiPath = null;
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
             Path path = Paths.get(entry.getName());
-            wikiPath = path.subpath(0, 1);
             InputStream inputStream = zf.getInputStream(entry);
-            if (!wikiPath.equals(previousWikiPath)) {
-                if (previousWikiPath != null) {
-                    wikiReader.close();
-                }
-                if (path.endsWith(WikiReader.WIKI_FILENAME) && path.getNameCount() == 2) {
-                    wikiReader.open(path, null, inputStream);
-                } else {
-                    wikiReader.open(path, null, null);
-                    wikiReader.route(path, inputStream);
-                }
-            } else {
-                wikiReader.route(path, inputStream);
-            }
-            previousWikiPath = wikiPath;
+            wikiReader.route(path, inputStream, null);
         }
-        if (wikiPath != null) {
-            wikiReader.close();
-        }
+
+        wikiReader.finish();
         zf.close();
     }
 }

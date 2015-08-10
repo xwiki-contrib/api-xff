@@ -27,6 +27,7 @@ import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xar2.input.AbstractReader;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.SpaceReference;
+import org.xwiki.model.reference.WikiReference;
 import org.xwiki.rest.model.jaxb.Space;
 
 /**
@@ -51,6 +52,16 @@ public class SpaceReader extends AbstractReader
      * Contain the model of a space (see xwiki-platform-rest-model).
      */
     private Space xSpace = new Space();
+
+    /**
+     * Retain information about if a space has been opened.
+     */
+    private boolean started;
+
+    /**
+     * Retain the last space path in order to close and reinit if the current space is a new one.
+     */
+    private Path previousSpacePath;
 
     /**
      * Retain the last page path in order to close and reinit if the current page is a new one.
@@ -79,6 +90,7 @@ public class SpaceReader extends AbstractReader
         this.reference = null;
         this.xSpace = new Space();
         this.previousPagePath = null;
+        this.started = false;
     }
 
     private void setReference(String spaceName, EntityReference parentReference)
@@ -86,8 +98,7 @@ public class SpaceReader extends AbstractReader
         this.reference = new SpaceReference(spaceName, parentReference);
     }
 
-    @Override
-    public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
+    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
@@ -98,33 +109,58 @@ public class SpaceReader extends AbstractReader
             spaceName = path.getName(1).toString();
         }
         this.setReference(spaceName, parentReference);
+    }
+
+    private void start() throws FilterException
+    {
         this.proxyFilter.beginWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
+        this.started = true;
     }
 
     @Override
-    public void route(Path path, InputStream inputStream) throws FilterException
+    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path pagePath = path.subpath(0, 3);
-        if (!pagePath.equals(this.previousPagePath)) {
-            if (this.previousPagePath != null) {
-                this.pageReader.close();
-            }
-            if (path.endsWith(PageReader.PAGE_FILENAME) && path.getNameCount() == 4) {
-                this.pageReader.open(path, this.reference, inputStream);
-            } else {
-                this.pageReader.open(path, this.reference, null);
-                this.pageReader.route(path, inputStream);
-            }
-        } else {
-            this.pageReader.route(path, inputStream);
+        Path spacePath = path.subpath(0, 2);
+
+        // Close previous space before starting a new one
+        if (!spacePath.equals(this.previousSpacePath)) {
+            this.finish();
         }
-        this.previousPagePath = pagePath;
+        // Parse files relative to space or reroute them to the PageReader
+        if (path.endsWith(SpaceReader.SPACE_FILENAME) && path.getNameCount() == 3) {
+            this.init(path, inputStream, parentReference);
+        } else {
+            // If the space has not been initialized, initializes it with only the path
+            if (this.reference == null) {
+                this.init(path, null, parentReference);
+            }
+            // Before routing any other file, start the space
+            if (!this.started) {
+                this.start();
+            }
+            Path pagePath = path.subpath(0, 3);
+            if (!pagePath.equals(this.previousPagePath)) {
+                if (this.previousPagePath != null) {
+                    this.pageReader.finish();
+                }
+                if (path.endsWith(PageReader.PAGE_FILENAME) && path.getNameCount() == 4) {
+                    this.pageReader.open(path, this.reference, inputStream);
+                } else {
+                    this.pageReader.open(path, this.reference, null);
+                    this.pageReader.route(path, inputStream, null);
+                }
+            } else {
+                this.pageReader.route(path, inputStream, null);
+            }
+            this.previousPagePath = pagePath;
+        }
+        this.previousSpacePath = spacePath;
     }
 
     @Override
-    public void close() throws FilterException
+    public void finish() throws FilterException
     {
-        this.pageReader.close();
+        this.pageReader.finish();
         if (this.reference != null) {
             this.proxyFilter.endWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
         }

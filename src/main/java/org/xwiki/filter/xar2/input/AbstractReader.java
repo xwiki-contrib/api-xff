@@ -89,31 +89,22 @@ public abstract class AbstractReader
     }
 
     /**
-     * Initialize the Reader for a new element. It's usually call with the XML file that describe the current element.
-     * If it's not the case, the initialization will use the path to initialize the element.
-     * 
-     * @param path is the path to the file that will be used for initialization
-     * @param reference can be used a parent reference
-     * @param inputStream is the XML input stream
-     * @throws FilterException whenever there is problem to generate an event
-     */
-    public abstract void open(Path path, EntityReference reference, InputStream inputStream) throws FilterException;
-
-    /**
      * Push a new file to the reader. When a XAR2 is read, it's read file by file. The master filter (XAR2Filter) will
      * route these information to the child filter (wiki, then space, then page, etc.) until the right filter is in
      * charge (e.g. a path 'xwiki/Space/Page/index.xml' will be treated by the PageFilter).
      * 
      * @param path is the relative path of the file being read
      * @param inputStream is the stream of the read file
+     * @param parentReference TODO
      * @throws FilterException whenever there is problem to generate an event
      */
-    public abstract void route(Path path, InputStream inputStream) throws FilterException;
+    public abstract void route(Path path, InputStream inputStream, EntityReference parentReference)
+        throws FilterException;
 
     /**
      * When all elements has been pushed, this method should be called to close properly the filter.
      * 
      * @throws FilterException whenever there is problem to generate an event
      */
-    public abstract void close() throws FilterException;
+    public abstract void finish() throws FilterException;
 }

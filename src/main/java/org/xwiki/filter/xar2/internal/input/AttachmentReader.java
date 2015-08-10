@@ -71,7 +71,6 @@ public class AttachmentReader extends AbstractReader
         this.reference = new AttachmentReference(attachmentName, (DocumentReference) parentReference);
     }
 
-    @Override
     public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
     {
         String attachmentName = path.getFileName().toString();
@@ -79,7 +78,7 @@ public class AttachmentReader extends AbstractReader
     }
 
     @Override
-    public void route(Path path, InputStream inputStream) throws FilterException
+    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
 
         byte[] bytes;
@@ -96,7 +95,7 @@ public class AttachmentReader extends AbstractReader
     }
 
     @Override
-    public void close() throws FilterException
+    public void finish() throws FilterException
     {
         this.reset();
     }
