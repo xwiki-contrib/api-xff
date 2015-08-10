@@ -127,7 +127,7 @@ public class SpaceReader extends AbstractReader
             this.finish();
         }
         // Parse files relative to space or reroute them to the PageReader
-        if (path.endsWith(SpaceReader.SPACE_FILENAME) && path.getNameCount() == 3) {
+        if (path.endsWith(SpaceReader.SPACE_FILENAME)) {
             this.init(path, inputStream, parentReference);
         } else {
             // If the space has not been initialized, initializes it with only the path
@@ -138,21 +138,7 @@ public class SpaceReader extends AbstractReader
             if (!this.started) {
                 this.start();
             }
-            Path pagePath = path.subpath(0, 3);
-            if (!pagePath.equals(this.previousPagePath)) {
-                if (this.previousPagePath != null) {
-                    this.pageReader.finish();
-                }
-                if (path.endsWith(PageReader.PAGE_FILENAME) && path.getNameCount() == 4) {
-                    this.pageReader.open(path, this.reference, inputStream);
-                } else {
-                    this.pageReader.open(path, this.reference, null);
-                    this.pageReader.route(path, inputStream, null);
-                }
-            } else {
-                this.pageReader.route(path, inputStream, null);
-            }
-            this.previousPagePath = pagePath;
+            this.pageReader.route(path, inputStream, this.reference);
         }
         this.previousSpacePath = spacePath;
     }
@@ -162,6 +148,9 @@ public class SpaceReader extends AbstractReader
     {
         this.pageReader.finish();
         if (this.reference != null) {
+            if (!this.started) {
+                this.start();
+            }
             this.proxyFilter.endWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
         }
         this.reset();

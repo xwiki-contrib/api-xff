@@ -119,7 +119,7 @@ public class WikiReader extends AbstractReader
             this.finish();
         }
         // Parse files relative to wiki or reroute them to the SpaceReader
-        if (path.endsWith(WikiReader.WIKI_FILENAME) && path.getNameCount() == 2) {
+        if (path.endsWith(WikiReader.WIKI_FILENAME)) {
             this.init(path, inputStream, parentReference);
         } else {
             // If the wiki has not been initialized, initializes it with only the path
@@ -139,7 +139,10 @@ public class WikiReader extends AbstractReader
     public void finish() throws FilterException
     {
         this.spaceReader.finish();
-        if (this.started) {
+        if (this.reference != null) {
+            if (!this.started) {
+                this.start();
+            }
             this.proxyFilter.endWiki(this.reference.getName(), FilterEventParameters.EMPTY);
         }
         this.reset();
