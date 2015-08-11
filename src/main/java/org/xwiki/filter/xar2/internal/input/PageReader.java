@@ -78,14 +78,9 @@ public class PageReader extends AbstractReader
     private Path previousPagePath;
 
     /**
-     * Retain the last global path in the page in order to close class, objects or attachments before opening another.
+     * Retain the last sub-path in the page in order to close class, objects or attachments before opening another.
      */
-    private Path previousPath;
-
-    /**
-     * Retain the last class in order to close and reinit if the current class is a new one.
-     */
-    private Path previousClassPath;
+    private Path previousPageElementPath;
 
     /**
      * Retain the last object in order to close and reinit if the current object is a new one.
@@ -139,8 +134,6 @@ public class PageReader extends AbstractReader
     private void reset()
     {
         this.reference = null;
-        this.previousPath = null;
-        this.previousClassPath = null;
         this.previousObjectPath = null;
         this.xPage = new Page();
         this.parameters = FilterEventParameters.EMPTY;
@@ -211,25 +204,6 @@ public class PageReader extends AbstractReader
         }
     }
 
-    private void routeClass(Path path, InputStream inputStream) throws FilterException
-    {
-        Path classPath = path.subpath(0, 5);
-        if (!classPath.equals(this.previousClassPath)) {
-            if (this.previousClassPath != null) {
-                this.classReader.finish();
-            }
-            if (path.endsWith(ClassReader.CLASS_FILENAME) && path.getNameCount() == 5) {
-                this.classReader.open(path, this.reference, inputStream);
-            } else {
-                this.classReader.open(path, this.reference, null);
-                this.classReader.route(path, inputStream, null);
-            }
-        } else {
-            this.classReader.route(path, inputStream, null);
-        }
-        this.previousClassPath = classPath;
-    }
-
     private void routeObject(Path path, InputStream inputStream) throws FilterException
     {
         Path objectPath = path.subpath(0, 6);
@@ -253,19 +227,19 @@ public class PageReader extends AbstractReader
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         Path pagePath = path.subpath(0, 3);
-        Path pageSubPath = path.subpath(0, 4);
+        Path pagePageElementPath = path.subpath(0, 4);
 
         // Close previous page and sub-paths before starting a new one
-        if (!pageSubPath.equals(this.previousPath)) {
-            this.finishChilds();
+        if (!pagePageElementPath.equals(this.previousPageElementPath)) {
+            this.finishPageElements();
             if (!pagePath.equals(this.previousPagePath)) {
                 this.finish();
             }
         }
-        // Parse files relative to page or reroute them to the PageReader
+        // Parse files relative to page or reroute them
         if (path.endsWith(PageReader.PAGE_FILENAME)) {
             this.init(path, inputStream, parentReference);
-        } else if (pageSubPath.endsWith("_metadata")) {
+        } else if (pagePageElementPath.endsWith("_metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             // If the page has not been initialized, initializes it with only the path
@@ -277,19 +251,19 @@ public class PageReader extends AbstractReader
                 this.start();
             }
 
-            if (pageSubPath.endsWith("attachments")) {
+            if (pagePageElementPath.endsWith("attachments")) {
                 this.attachmentReader.route(path, inputStream, this.reference);
-            } else if (pageSubPath.endsWith("class")) {
-                this.routeClass(path, inputStream);
-            } else if (pageSubPath.endsWith("objects")) {
+            } else if (pagePageElementPath.endsWith("class")) {
+                this.classReader.route(path, inputStream, this.reference);
+            } else if (pagePageElementPath.endsWith("objects")) {
                 this.routeObject(path, inputStream);
             }
-            this.previousPath = pageSubPath;
+            this.previousPageElementPath = pagePageElementPath;
         }
         this.previousPagePath = pagePath;
     }
 
-    private void finishChilds() throws FilterException
+    private void finishPageElements() throws FilterException
     {
         this.attachmentReader.finish();
         this.classReader.finish();
@@ -299,7 +273,7 @@ public class PageReader extends AbstractReader
     @Override
     public void finish() throws FilterException
     {
-        this.finishChilds();
+        this.finishPageElements();
         if (this.reference != null) {
             if (!this.started) {
                 this.start();

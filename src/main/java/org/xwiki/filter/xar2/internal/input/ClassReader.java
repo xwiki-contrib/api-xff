@@ -55,6 +55,16 @@ public class ClassReader extends AbstractReader
     private Class xClass = new Class();
 
     /**
+     * Retain information about if a class has been opened.
+     */
+    private boolean started;
+
+    /**
+     * Retain the last class in order to close and reinit if the current class is a new one.
+     */
+    private Path previousClassPath;
+
+    /**
      * Parameters to send to the current class.
      */
     private FilterEventParameters parameters = FilterEventParameters.EMPTY;
@@ -75,6 +85,7 @@ public class ClassReader extends AbstractReader
         this.reference = null;
         this.xClass = new Class();
         this.parameters = FilterEventParameters.EMPTY;
+        this.started = false;
     }
 
     private void setReference(EntityReference parentReference)
@@ -82,7 +93,7 @@ public class ClassReader extends AbstractReader
         this.reference = (DocumentReference) parentReference;
     }
 
-    private void filterProperties() throws FilterException
+    private void routeProperties() throws FilterException
     {
         for (Property property : this.xClass.getProperties()) {
             this.proxyFilter
@@ -95,27 +106,48 @@ public class ClassReader extends AbstractReader
         }
     }
 
-    public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
+    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
             this.xClass = (Class) this.unmarshal(inputStream, Class.class);
         }
         this.setReference(parentReference);
+    }
+
+    private void start() throws FilterException
+    {
         this.proxyFilter.beginWikiClass(this.parameters);
+        this.started = true;
     }
 
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        // TODO: Route paths
+        Path classPath = path.subpath(0, 4);
+
+        // Close previous class before starting a new one
+        if (!classPath.equals(this.previousClassPath)) {
+            this.finish();
+        }
+        // Parse files relative to page or reroute them
+        if (path.endsWith(ClassReader.CLASS_FILENAME)) {
+            this.init(classPath, inputStream, parentReference);
+        } else {
+            String message = String.format("ClassReader don't know how to route '%s'.", path.toString());
+            throw new FilterException(message);
+        }
+        this.previousClassPath = classPath;
     }
 
     @Override
     public void finish() throws FilterException
     {
         if (this.reference != null) {
-            filterProperties();
+            if (!this.started) {
+                this.start();
+            }
+            routeProperties();
             this.proxyFilter.endWikiClass(this.parameters);
         }
         this.reset();
