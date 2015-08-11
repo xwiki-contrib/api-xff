@@ -59,6 +59,16 @@ public class ObjectReader extends AbstractReader
     private org.xwiki.rest.model.jaxb.Object xObject = new org.xwiki.rest.model.jaxb.Object();
 
     /**
+     * Retain information about if a object has been opened.
+     */
+    private boolean started;
+
+    /**
+     * Retain the last object in order to close and reinit if the current object is a new one.
+     */
+    private Path previousObjectPath;
+
+    /**
      * Parameters to send to the current class.
      */
     private FilterEventParameters parameters = FilterEventParameters.EMPTY;
@@ -80,6 +90,7 @@ public class ObjectReader extends AbstractReader
         this.number = -1;
         this.xObject = new org.xwiki.rest.model.jaxb.Object();
         this.parameters = FilterEventParameters.EMPTY;
+        this.started = false;
     }
 
     private void setReference(String className, EntityReference parentReference)
@@ -96,14 +107,14 @@ public class ObjectReader extends AbstractReader
         return nameBuilder.toString();
     }
 
-    private void filterProperties() throws FilterException
+    private void routeProperties() throws FilterException
     {
         for (Property property : this.xObject.getProperties()) {
             this.proxyFilter.onWikiObjectProperty(property.getName(), property.getValue(), FilterEventParameters.EMPTY);
         }
     }
 
-    public void open(Path path, EntityReference parentReference, InputStream inputStream) throws FilterException
+    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
@@ -116,20 +127,41 @@ public class ObjectReader extends AbstractReader
         }
         this.setReference(objectName, parentReference);
         this.number = Integer.parseInt(path.getName(5).toString());
+    }
+
+    private void start() throws FilterException
+    {
         this.proxyFilter.beginWikiObject(this.getName(), this.parameters);
+        this.started = true;
     }
 
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        // TODO: Route paths
+        Path objectPath = path.subpath(0, 6);
+
+        // Close previous object before starting a new one
+        if (!objectPath.equals(this.previousObjectPath)) {
+            this.finish();
+        }
+        // Parse files relative to page or reroute them
+        if (path.endsWith(ObjectReader.OBJECT_FILENAME)) {
+            this.init(objectPath, inputStream, parentReference);
+        } else {
+            String message = String.format("ObjectReader don't know how to route '%s'.", path.toString());
+            throw new FilterException(message);
+        }
+        this.previousObjectPath = objectPath;
     }
 
     @Override
     public void finish() throws FilterException
     {
         if (this.reference != null) {
-            filterProperties();
+            if (!this.started) {
+                this.start();
+            }
+            routeProperties();
             this.proxyFilter.endWikiObject(this.getName(), this.parameters);
         }
         this.reset();

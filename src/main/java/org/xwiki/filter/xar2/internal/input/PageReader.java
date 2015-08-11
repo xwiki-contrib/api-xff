@@ -83,11 +83,6 @@ public class PageReader extends AbstractReader
     private Path previousPageElementPath;
 
     /**
-     * Retain the last object in order to close and reinit if the current object is a new one.
-     */
-    private Path previousObjectPath;
-
-    /**
      * Child reader for attachments.
      */
     private AttachmentReader attachmentReader;
@@ -134,7 +129,6 @@ public class PageReader extends AbstractReader
     private void reset()
     {
         this.reference = null;
-        this.previousObjectPath = null;
         this.xPage = new Page();
         this.parameters = FilterEventParameters.EMPTY;
         this.parametersLocale = FilterEventParameters.EMPTY;
@@ -204,25 +198,6 @@ public class PageReader extends AbstractReader
         }
     }
 
-    private void routeObject(Path path, InputStream inputStream) throws FilterException
-    {
-        Path objectPath = path.subpath(0, 6);
-        if (!objectPath.equals(this.previousObjectPath)) {
-            if (this.previousObjectPath != null) {
-                this.objectReader.finish();
-            }
-            if (path.endsWith(ObjectReader.OBJECT_FILENAME) && path.getNameCount() == 7) {
-                this.objectReader.open(path, this.reference, inputStream);
-            } else {
-                this.objectReader.open(path, this.reference, null);
-                this.objectReader.route(path, inputStream, null);
-            }
-        } else {
-            this.objectReader.route(path, inputStream, null);
-        }
-        this.previousObjectPath = objectPath;
-    }
-
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
@@ -256,7 +231,7 @@ public class PageReader extends AbstractReader
             } else if (pagePageElementPath.endsWith("class")) {
                 this.classReader.route(path, inputStream, this.reference);
             } else if (pagePageElementPath.endsWith("objects")) {
-                this.routeObject(path, inputStream);
+                this.objectReader.route(path, inputStream, this.reference);
             }
             this.previousPageElementPath = pagePageElementPath;
         }
