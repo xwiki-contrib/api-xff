@@ -19,9 +19,11 @@
  */
 package org.xwiki.filter.xar2.internal.input;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import org.apache.commons.io.IOUtils;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xar2.input.AbstractReader;
@@ -121,6 +123,28 @@ public class ClassReader extends AbstractReader
         this.started = true;
     }
 
+    private void routeMetadata(Path path, InputStream inputStream) throws FilterException
+    {
+        String filename = path.getFileName().toString();
+        String filePropertyName = path.getName(path.getNameCount() - 2).toString();
+        for (Property property : this.xClass.getProperties()) {
+            String propertyName = property.getName();
+            if (filePropertyName.equals(propertyName)) {
+                for (Attribute attribute : property.getAttributes()) {
+                    String attributeName = attribute.getName();
+                    if (filename.startsWith(attributeName + '.')) {
+                        try {
+                            attribute.setValue(IOUtils.toString(inputStream));
+                        } catch (IOException e) {
+                            String message = String.format("Unable to read a string from '%s'.", path.toString());
+                            throw new FilterException(message, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
@@ -133,6 +157,8 @@ public class ClassReader extends AbstractReader
         // Parse files relative to page or reroute them
         if (path.endsWith(ClassReader.CLASS_FILENAME)) {
             this.init(classPath, inputStream, parentReference);
+        } else if (classPath.relativize(path).toString().startsWith("_metadata")) {
+            this.routeMetadata(path, inputStream);
         } else {
             String message = String.format("ClassReader don't know how to route '%s'.", path.toString());
             throw new FilterException(message);
