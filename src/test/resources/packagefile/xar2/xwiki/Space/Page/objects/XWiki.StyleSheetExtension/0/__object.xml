@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns="http://www.xwiki.org">
+  <className>XWiki.StyleSheetExtension</className>
+  <property name="cache">
+    <value>long</value>
+  </property>
+  <property name="code">
+    <value>some code</value>
+  </property>
+  <property name="name">
+    <value>theme</value>
+  </property>
+  <property name="parse">
+    <value></value>
+  </property>
+  <property name="use">
+    <value>onDemand</value>
+  </property>
+</object>
