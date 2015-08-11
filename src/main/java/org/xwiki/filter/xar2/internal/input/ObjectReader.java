@@ -140,16 +140,14 @@ public class ObjectReader extends AbstractReader
     private void routeMetadata(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
-        // TODO: Make it more generic
-        if (filename.startsWith("code.")) {
-            for (Property property : this.xObject.getProperties()) {
-                if (property.getName().equals("code")) {
-                    try {
-                        property.setValue(IOUtils.toString(inputStream));
-                    } catch (IOException e) {
-                        String message = String.format("Unable to read a string from '%s'.", path.toString());
-                        throw new FilterException(message, e);
-                    }
+        for (Property property : this.xObject.getProperties()) {
+            String propertyName = property.getName();
+            if (filename.startsWith(propertyName + '.')) {
+                try {
+                    property.setValue(IOUtils.toString(inputStream));
+                } catch (IOException e) {
+                    String message = String.format("Unable to read a string from '%s'.", path.toString());
+                    throw new FilterException(message, e);
                 }
             }
         }

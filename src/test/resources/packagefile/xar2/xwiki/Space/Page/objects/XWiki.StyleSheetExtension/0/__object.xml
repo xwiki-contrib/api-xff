@@ -4,9 +4,7 @@
   <property name="cache">
     <value>long</value>
   </property>
-  <property name="code">
-    <value>some code</value>
-  </property>
+  <property name="code" />
   <property name="name">
     <value>theme</value>
   </property>
