@@ -74,7 +74,10 @@
           </wikiObject>
           <wikiObject name="XWiki.StyleSheetExtension[0]">
             <wikiObjectProperty name="cache" value="long"></wikiObjectProperty>
-            <wikiObjectProperty name="code" value="some code"></wikiObjectProperty>
+            <wikiObjectProperty name="code" value="body {
+	background: red;
+}
+"></wikiObjectProperty>
             <wikiObjectProperty name="name" value="theme"></wikiObjectProperty>
             <wikiObjectProperty name="parse" value=""></wikiObjectProperty>
             <wikiObjectProperty name="use" value="onDemand"></wikiObjectProperty>

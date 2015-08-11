@@ -188,12 +188,13 @@ public class PageReader extends AbstractReader
     private void routeMetadata(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
+        // TODO: Make it more generic
         if (filename.startsWith("content.")) {
             try {
                 this.xPage.setContent(IOUtils.toString(inputStream));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                String message = String.format("Unable to read a string from '%s'.", path.toString());
+                throw new FilterException(message, e);
             }
         }
     }

@@ -95,7 +95,7 @@ public abstract class AbstractReader
      * 
      * @param path is the relative path of the file being read
      * @param inputStream is the stream of the read file
-     * @param parentReference TODO
+     * @param parentReference is a reference of the element that call this method
      * @throws FilterException whenever there is problem to generate an event
      */
     public abstract void route(Path path, InputStream inputStream, EntityReference parentReference)
