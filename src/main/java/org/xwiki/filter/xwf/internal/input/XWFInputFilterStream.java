@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.internal.input;
+package org.xwiki.filter.xwf.internal.input;
 
 import java.io.IOException;
 
@@ -32,20 +32,20 @@ import org.xwiki.filter.FilterException;
 import org.xwiki.filter.input.AbstractBeanInputFilterStream;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
-import org.xwiki.filter.xar2.input.XAR2InputProperties;
-import org.xwiki.filter.xar2.internal.XAR2FilterUtils;
+import org.xwiki.filter.xwf.input.XWFInputProperties;
+import org.xwiki.filter.xwf.internal.XWFFilterUtils;
 
 /**
  * @version $Id$
  * @since 7.1
  */
 @Component
-@Named(XAR2FilterUtils.ROLEHINT)
+@Named(XWFFilterUtils.ROLEHINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
-public class XAR2InputFilterStream extends AbstractBeanInputFilterStream<XAR2InputProperties, XAR2InputFilter>
+public class XWFInputFilterStream extends AbstractBeanInputFilterStream<XWFInputProperties, XWFInputFilter>
 {
     @Inject
-    private Provider<XAR2Reader> xar2ReaderProvider;
+    private Provider<XWFReader> xwfReaderProvider;
 
     @Override
     public void close() throws IOException
@@ -54,14 +54,14 @@ public class XAR2InputFilterStream extends AbstractBeanInputFilterStream<XAR2Inp
     }
 
     @Override
-    protected void read(Object filter, XAR2InputFilter proxyFilter) throws FilterException
+    protected void read(Object filter, XWFInputFilter proxyFilter) throws FilterException
     {
         InputSource inputSource = this.properties.getSource();
 
         if (inputSource instanceof InputStreamInputSource) {
-            XAR2Reader xar2Reader = this.xar2ReaderProvider.get();
-            xar2Reader.setProperties(this.properties);
-            xar2Reader.read(filter, proxyFilter);
+            XWFReader xwfReader = this.xwfReaderProvider.get();
+            xwfReader.setProperties(this.properties);
+            xwfReader.read(filter, proxyFilter);
         } else {
             throw new FilterException(String.format("Unsupported input source of type [%s]", inputSource.getClass()));
         }

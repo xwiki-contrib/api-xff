@@ -17,26 +17,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.internal;
+package org.xwiki.filter.xwf.internal.input;
 
-import org.xwiki.filter.event.model.WikiFarmFilter;
-import org.xwiki.filter.event.model.WikiClassFilter;
-import org.xwiki.filter.event.model.WikiClassPropertyFilter;
-import org.xwiki.filter.event.model.WikiFilter;
-import org.xwiki.filter.event.model.WikiObjectFilter;
-import org.xwiki.filter.event.model.WikiObjectPropertyFilter;
-import org.xwiki.filter.event.model.WikiSpaceFilter;
-import org.xwiki.filter.event.xwiki.XWikiWikiAttachmentFilter;
-import org.xwiki.filter.event.xwiki.XWikiWikiDocumentFilter;
+import org.xwiki.filter.event.extension.ExtensionFilter;
+import org.xwiki.filter.xwf.internal.XWFFilter;
 
 /**
- * All events supported by XAR module.
+ * All events supported by XWF input module.
  * 
  * @version $Id$
  * @since 6.2M1
  */
-public interface XAR2Filter extends WikiFarmFilter, WikiFilter, WikiSpaceFilter, XWikiWikiDocumentFilter,
-    XWikiWikiAttachmentFilter, WikiClassFilter, WikiClassPropertyFilter, WikiObjectFilter, WikiObjectPropertyFilter
+public interface XWFInputFilter extends XWFFilter, ExtensionFilter
 {
 
 }

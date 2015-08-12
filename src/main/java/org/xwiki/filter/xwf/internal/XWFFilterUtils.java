@@ -17,18 +17,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.internal;
+package org.xwiki.filter.xwf.internal;
 
 /**
  * @version $Id$
  * @since 7.1
  */
-public final class XAR2FilterUtils
+public final class XWFFilterUtils
 {
     /**
      * @since 7.1
      */
-    public static final String ROLEHINT = "xwiki+xar/2.0";
+    public static final String ROLEHINT = "xwiki+xwf/1.0";
 
     /**
      * @version $Id$
@@ -65,7 +65,7 @@ public final class XAR2FilterUtils
         }
     }
 
-    private XAR2FilterUtils()
+    private XWFFilterUtils()
     {
     }
 }

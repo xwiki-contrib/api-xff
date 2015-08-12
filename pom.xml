@@ -27,16 +27,16 @@
 		<version>7.1.1</version>
 	</parent>
 	<groupId>org.xwiki.contrib</groupId>
-	<artifactId>xwiki-platform-filter-stream-xar2</artifactId>
+	<artifactId>xwiki-platform-filter-stream-xwf</artifactId>
 	<version>0.1-SNAPSHOT</version>
-	<name>XWiki Platform - Filter - XAR2</name>
-	<description>Filter stream extension to read and write XAR2 packages</description>
+	<name>XWiki Platform - Filter - XWF</name>
+	<description>Filter stream extension to read and write XWF packages</description>
 	<properties>
 		<platform.version>7.1.1</platform.version>
 		<xwiki.jacoco.instructionRatio>0.75</xwiki.jacoco.instructionRatio>
 
 		<!-- Name to display by the Extension Manager -->
-		<xwiki.extension.name>Filter XAR2 module</xwiki.extension.name>
+		<xwiki.extension.name>Filter XWF module</xwiki.extension.name>
 	</properties>
 	<dependencies>
 		<dependency>

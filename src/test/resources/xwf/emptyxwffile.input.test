@@ -2,6 +2,6 @@
 .expect|filter+xml
 .#------------------------------------------------------------------------------
 .#------------------------------------------------------------------------------
-.input|xwiki+xar/2.0
-.configuration.source=${{{extension.repository}}}/empty-1.0.xar2
+.input|xwiki+xwf/1.0
+.configuration.source=${{{extension.repository}}}/empty-1.0.xwf
 .#------------------------------------------------------------------------------

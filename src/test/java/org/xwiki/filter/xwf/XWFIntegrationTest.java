@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar;
+package org.xwiki.filter.xwf;
 
 import java.io.File;
 import java.util.Date;
@@ -38,8 +38,8 @@ import org.xwiki.test.annotation.AllComponents;
  */
 @RunWith(FilterTestSuite.class)
 @AllComponents
-@Scope("xar2")
-public class XAR2IntegrationTest
+@Scope("xwf")
+public class XWFIntegrationTest
 {
     @BeforeClass
     public static void beforeClass() throws Exception
@@ -48,9 +48,9 @@ public class XAR2IntegrationTest
         ExtensionPackager extensionPackager = new ExtensionPackager(null, folder);
         extensionPackager.generateExtensions();
         
-        File xar2DirSrc = new File("target/test-classes/packagefile/xar2/xwiki");
-        File xar2DirDst = new File(folder.toString() + "/xwiki");
-        FileUtils.copyDirectoryStructure(xar2DirSrc, xar2DirDst);
+        File xwfDirSrc = new File("target/test-classes/packagefile/xwf/xwiki");
+        File xwfDirDst = new File(folder.toString() + "/xwiki");
+        FileUtils.copyDirectoryStructure(xwfDirSrc, xwfDirDst);
 
         System.setProperty("extension.repository", folder.getAbsolutePath());
     }

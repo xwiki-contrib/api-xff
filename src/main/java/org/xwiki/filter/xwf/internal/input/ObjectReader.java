@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.internal.input;
+package org.xwiki.filter.xwf.internal.input;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,14 +26,14 @@ import java.nio.file.Path;
 import org.apache.commons.io.IOUtils;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.xar2.input.AbstractReader;
+import org.xwiki.filter.xwf.input.AbstractReader;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.ObjectReference;
 import org.xwiki.rest.model.jaxb.Property;
 
 /**
- * Read file from XAR2 and parse them or reroute them to child readers.
+ * Read file from XWF and parse them or reroute them to child readers.
  * 
  * @version $Id$
  * @since 7.1
@@ -81,7 +81,7 @@ public class ObjectReader extends AbstractReader
      * @param filter is the input filter
      * @param proxyFilter is the output filter
      */
-    public ObjectReader(Object filter, XAR2InputFilter proxyFilter)
+    public ObjectReader(Object filter, XWFInputFilter proxyFilter)
     {
         super(filter, proxyFilter);
     }

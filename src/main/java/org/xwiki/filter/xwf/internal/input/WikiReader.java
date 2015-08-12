@@ -17,140 +17,133 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.internal.input;
+package org.xwiki.filter.xwf.internal.input;
 
 import java.io.InputStream;
 import java.nio.file.Path;
 
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.xar2.input.AbstractReader;
+import org.xwiki.filter.xwf.input.AbstractReader;
 import org.xwiki.model.reference.EntityReference;
-import org.xwiki.model.reference.SpaceReference;
-import org.xwiki.rest.model.jaxb.Space;
+import org.xwiki.model.reference.WikiReference;
+import org.xwiki.rest.model.jaxb.Wiki;
 
 /**
- * Read file from XAR2 and parse them or reroute them to child readers.
+ * Read file from XWF and parse them or reroute them to child readers.
  * 
  * @version $Id$
  * @since 7.1
  */
-public class SpaceReader extends AbstractReader
+public class WikiReader extends AbstractReader
 {
     /**
-     * Name of the file to describe a space.
+     * Name of the file to describe a wiki.
      */
-    static final String SPACE_FILENAME = "__space.xml";
+    static final String WIKI_FILENAME = "__wiki.xml";
 
     /**
-     * Reference to the current space.
+     * Reference to the current wiki.
      */
-    private SpaceReference reference;
+    private WikiReference reference;
 
     /**
-     * Contain the model of a space (see xwiki-platform-rest-model).
+     * Contain the model of a wiki (see xwiki-platform-rest-model).
      */
-    private Space xSpace = new Space();
-
+    private Wiki xWiki = new Wiki();
+    
     /**
-     * Retain information about if a space has been opened.
+     * Retain information about if a wiki has been opened.
      */
     private boolean started;
 
     /**
-     * Retain the last space path in order to close and reinit if the current space is a new one.
+     * Retain the last wiki path in order to close and reinit if the current wiki is a new one.
      */
-    private Path previousSpacePath;
+    private Path previousWikiPath;
 
     /**
-     * Retain the last page path in order to close and reinit if the current page is a new one.
+     * Child reader for spaces.
      */
-    private Path previousPagePath;
+    private SpaceReader spaceReader;
 
     /**
-     * Child reader for page.
-     */
-    private PageReader pageReader;
-
-    /**
-     * Constructor that instantiate the child page reader.
+     * Constructor that instantiate the child space reader.
      * 
      * @param filter is the input filter
      * @param proxyFilter is the output filter
      */
-    public SpaceReader(Object filter, XAR2InputFilter proxyFilter)
+    public WikiReader(Object filter, XWFInputFilter proxyFilter)
     {
         super(filter, proxyFilter);
-        this.pageReader = new PageReader(filter, proxyFilter);
+        this.spaceReader = new SpaceReader(filter, proxyFilter);
     }
 
     private void reset()
     {
         this.reference = null;
-        this.xSpace = new Space();
-        this.previousPagePath = null;
+        this.xWiki = new Wiki();
         this.started = false;
     }
 
-    private void setReference(String spaceName, EntityReference parentReference)
+    private void setReference(String wikiName)
     {
-        this.reference = new SpaceReference(spaceName, parentReference);
+        this.reference = new WikiReference(wikiName);
     }
 
     private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
-            this.xSpace = (Space) this.unmarshal(inputStream, Space.class);
+            this.xWiki = (Wiki) this.unmarshal(inputStream, Wiki.class);
         }
-        String spaceName = this.xSpace.getId();
-        if (spaceName == null) {
-            spaceName = path.getName(1).toString();
+        String wikiName = this.xWiki.getId();
+        if (wikiName == null) {
+            wikiName = path.getName(0).toString();
         }
-        this.setReference(spaceName, parentReference);
+        this.setReference(wikiName);
     }
 
     private void start() throws FilterException
     {
-        this.proxyFilter.beginWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
+        this.proxyFilter.beginWiki(this.reference.getName(), FilterEventParameters.EMPTY);
         this.started = true;
     }
 
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path spacePath = path.subpath(0, 2);
-
-        // Close previous space before starting a new one
-        if (!spacePath.equals(this.previousSpacePath)) {
+        Path wikiPath = path.subpath(0, 1);
+        // Close previous wiki before starting a new one
+        if (!wikiPath.equals(this.previousWikiPath)) {
             this.finish();
         }
-        // Parse files relative to space or reroute them to the PageReader
-        if (path.endsWith(SpaceReader.SPACE_FILENAME)) {
+        // Parse files relative to wiki or reroute them to the SpaceReader
+        if (path.endsWith(WikiReader.WIKI_FILENAME)) {
             this.init(path, inputStream, parentReference);
         } else {
-            // If the space has not been initialized, initializes it with only the path
+            // If the wiki has not been initialized, initializes it with only the path
             if (this.reference == null) {
                 this.init(path, null, parentReference);
             }
-            // Before routing any other file, start the space
+            // Before routing any other file, start the wiki
             if (!this.started) {
                 this.start();
             }
-            this.pageReader.route(path, inputStream, this.reference);
+            this.spaceReader.route(path, inputStream, this.reference);
         }
-        this.previousSpacePath = spacePath;
+        this.previousWikiPath = wikiPath;
     }
 
     @Override
     public void finish() throws FilterException
     {
-        this.pageReader.finish();
+        this.spaceReader.finish();
         if (this.reference != null) {
             if (!this.started) {
                 this.start();
             }
-            this.proxyFilter.endWikiSpace(this.reference.getName(), FilterEventParameters.EMPTY);
+            this.proxyFilter.endWiki(this.reference.getName(), FilterEventParameters.EMPTY);
         }
         this.reset();
     }

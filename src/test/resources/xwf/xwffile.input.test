@@ -101,6 +101,6 @@
   </wikiSpace>
 </wiki>
 .#------------------------------------------------------------------------------
-.input|xwiki+xar/2.0
-.configuration.source=${{{extension.repository}}}/test-1.0.xar2
+.input|xwiki+xwf/1.0
+.configuration.source=${{{extension.repository}}}/test-1.0.xwf
 .#------------------------------------------------------------------------------

@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xar2.input;
+package org.xwiki.filter.xwf.input;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -29,11 +29,11 @@ import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.xar2.internal.input.XAR2InputFilter;
+import org.xwiki.filter.xwf.internal.input.XWFInputFilter;
 import org.xwiki.model.reference.EntityReference;
 
 /**
- * Abstract class that each element from XAR2 (wiki, space, page, object, class, etc.) should implement.
+ * Abstract class that each element from XWF (wiki, space, page, object, class, etc.) should implement.
  * 
  * @version $Id$
  * @since 7.1
@@ -54,7 +54,7 @@ public abstract class AbstractReader
     /**
      * Proxy filter to use for the readers.
      */
-    protected XAR2InputFilter proxyFilter;
+    protected XWFInputFilter proxyFilter;
 
     /**
      * Constructor that stores filters (there is no empty constructor for readers).
@@ -62,7 +62,7 @@ public abstract class AbstractReader
      * @param filter is the input filter
      * @param proxyFilter is the output filter
      */
-    public AbstractReader(Object filter, XAR2InputFilter proxyFilter)
+    public AbstractReader(Object filter, XWFInputFilter proxyFilter)
     {
         this.filter = filter;
         this.proxyFilter = proxyFilter;
@@ -89,7 +89,7 @@ public abstract class AbstractReader
     }
 
     /**
-     * Push a new file to the reader. When a XAR2 is read, it's read file by file. The master filter (XAR2Filter) will
+     * Push a new file to the reader. When a XWF is read, it's read file by file. The master filter (XWFFilter) will
      * route these information to the child filter (wiki, then space, then page, etc.) until the right filter is in
      * charge (e.g. a path 'xwiki/Space/Page/index.xml' will be treated by the PageFilter).
      * 

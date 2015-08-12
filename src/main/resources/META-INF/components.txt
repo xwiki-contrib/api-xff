@@ -1,3 +1,3 @@
-org.xwiki.filter.xar2.internal.input.XAR2Reader
-org.xwiki.filter.xar2.internal.input.XAR2InputFilterStream
-org.xwiki.filter.xar2.internal.input.XAR2InputFilterStreamFactory
+org.xwiki.filter.xwf.internal.input.XWFReader
+org.xwiki.filter.xwf.internal.input.XWFInputFilterStream
+org.xwiki.filter.xwf.internal.input.XWFInputFilterStreamFactory
