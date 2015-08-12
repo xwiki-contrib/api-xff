@@ -203,10 +203,10 @@ public class PageReader extends AbstractReader
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         Path pagePath = path.subpath(0, 3);
-        Path pagePageElementPath = path.subpath(0, 4);
+        Path pageElementPath = path.subpath(0, 4);
 
         // Close previous page and sub-paths before starting a new one
-        if (!pagePageElementPath.equals(this.previousPageElementPath)) {
+        if (!pageElementPath.equals(this.previousPageElementPath)) {
             this.finishPageElements();
             if (!pagePath.equals(this.previousPagePath)) {
                 this.finish();
@@ -215,7 +215,7 @@ public class PageReader extends AbstractReader
         // Parse files relative to page or reroute them
         if (path.endsWith(PageReader.PAGE_FILENAME)) {
             this.init(path, inputStream, parentReference);
-        } else if (pagePageElementPath.endsWith("_metadata")) {
+        } else if (pageElementPath.endsWith("_metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             // If the page has not been initialized, initializes it with only the path
@@ -227,14 +227,14 @@ public class PageReader extends AbstractReader
                 this.start();
             }
 
-            if (pagePageElementPath.endsWith("attachments")) {
+            if (pageElementPath.endsWith("attachments")) {
                 this.attachmentReader.route(path, inputStream, this.reference);
-            } else if (pagePageElementPath.endsWith("class")) {
+            } else if (pageElementPath.endsWith("class")) {
                 this.classReader.route(path, inputStream, this.reference);
-            } else if (pagePageElementPath.endsWith("objects")) {
+            } else if (pageElementPath.endsWith("objects")) {
                 this.objectReader.route(path, inputStream, this.reference);
             }
-            this.previousPageElementPath = pagePageElementPath;
+            this.previousPageElementPath = pageElementPath;
         }
         this.previousPagePath = pagePath;
     }

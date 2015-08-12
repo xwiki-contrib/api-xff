@@ -85,7 +85,7 @@ public class AttachmentReader extends AbstractReader
         this.init(path, null, parentReference);
         try {
             bytes = IOUtils.toByteArray(inputStream);
-            // TODO: Why do we need length if we use an InputStream?
+            // FIXME: Why do we need length if we use an InputStream?
             this.proxyFilter.onWikiAttachment(this.reference.getName(), inputStream, Long.valueOf(bytes.length),
                 this.parameters);
         } catch (IOException e) {

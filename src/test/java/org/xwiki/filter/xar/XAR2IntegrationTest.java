@@ -22,12 +22,13 @@ package org.xwiki.filter.xar;
 import java.io.File;
 import java.util.Date;
 
+import org.codehaus.plexus.util.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.xwiki.extension.test.ExtensionPackager;
-import org.xwiki.test.annotation.AllComponents;
 import org.xwiki.filter.test.integration.FilterTestSuite;
 import org.xwiki.filter.test.integration.FilterTestSuite.Scope;
+import org.xwiki.test.annotation.AllComponents;
 
 /**
  * Run all tests found in the classpath. These {@code *.test} files must follow the conventions described in
@@ -46,6 +47,10 @@ public class XAR2IntegrationTest
         File folder = new File("target/test-" + new Date().getTime()).getAbsoluteFile();
         ExtensionPackager extensionPackager = new ExtensionPackager(null, folder);
         extensionPackager.generateExtensions();
+        
+        File xar2DirSrc = new File("target/test-classes/packagefile/xar2/xwiki");
+        File xar2DirDst = new File(folder.toString() + "/xwiki");
+        FileUtils.copyDirectoryStructure(xar2DirSrc, xar2DirDst);
 
         System.setProperty("extension.repository", folder.getAbsolutePath());
     }
