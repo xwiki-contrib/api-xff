@@ -144,13 +144,13 @@ public class PageReader extends AbstractReader
     private FilterEventParameters parseParameters()
     {
         // TODO: parse parameters for the current document
-        return null;
+        return FilterEventParameters.EMPTY;
     }
 
     private FilterEventParameters parseParametersLocale()
     {
         // TODO: parse parameters for the current document
-        return null;
+        return FilterEventParameters.EMPTY;
     }
 
     private FilterEventParameters parseParametersRevision()
