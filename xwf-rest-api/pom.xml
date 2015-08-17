@@ -21,34 +21,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.xwiki.commons</groupId>
-		<artifactId>xwiki-commons-pom</artifactId>
-		<version>7.1.1</version>
+		<groupId>org.xwiki.contrib</groupId>
+		<artifactId>xwf</artifactId>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.xwiki.contrib</groupId>
-	<artifactId>xwf</artifactId>
-	<version>0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>XWF - Parent POM</name>
-	<description>APIs for the XWF format</description>
+	<artifactId>xwf-rest-api</artifactId>
+	<packaging>jar</packaging>
+	<name>XWF - REST API</name>
+	<description>REST API to deal with XWF format</description>
 	<properties>
-		<platform.version>7.1.1</platform.version>
-		<xwiki.jacoco.instructionRatio>0.75</xwiki.jacoco.instructionRatio>
+		<!-- Name to display by the Extension Manager -->
+		<xwiki.extension.name>XWF REST API</xwiki.extension.name>
 	</properties>
-	<modules>
-		<module>xwf-filter-stream</module>
-		<module>xwf-rest-api</module>
-	</modules>
 
-	<build>
-		<plugins>
-			<plugin>
-				<!-- Apply the Checkstyle configurations defined in the top level
-				   pom.xml file -->
+	<dependencies>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xwiki.commons</groupId>
+			<artifactId>xwiki-commons-component-api</artifactId>
+			<version>${commons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xwiki.platform</groupId>
+			<artifactId>xwiki-platform-rest-api</artifactId>
+			<version>${platform.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xwiki.platform</groupId>
+			<artifactId>xwiki-platform-rest-server</artifactId>
+			<version>${platform.version}</version>
+		</dependency>
 
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-checkstyle-plugin</artifactId>
-		  </plugin>
-	  </plugins>
-  </build>
+	</dependencies>
 </project>

@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import javax.inject.Inject;
 
@@ -41,7 +42,9 @@ import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.input.FileInputSource;
 import org.xwiki.filter.input.InputSource;
+import org.xwiki.filter.input.InputStreamInputSource;
 import org.xwiki.filter.xwf.input.XWFInputProperties;
+import org.xwiki.filter.xwf.internal.UncloseableZipInputStream;
 
 /**
  * @version $Id$
@@ -78,9 +81,8 @@ public class XWFReader
     }
 
     /**
-     * Test if a file is a zip.
-     * 
-     * From http://www.java2s.com/Code/Java/File-Input-Output/DeterminewhetherafileisaZIPFile.htm
+     * Test if a file is a zip. From http://www.java2s.com/Code/Java/File-Input-Output/
+     * DeterminewhetherafileisaZIPFile.htm
      * 
      * @param file is the file to be tested
      * @return true if the file is a zip, return false in other cases
@@ -109,6 +111,17 @@ public class XWFReader
         return test == 0x504b0304 || test == 0x504b0506 || test == 0x504b0708;
     }
 
+    private boolean isZip(InputStream inputStream)
+    {
+        boolean isZipped = false;
+        try {
+            isZipped = new ZipInputStream(inputStream).getNextEntry() != null;
+        } catch (IOException e) {
+            return false;
+        }
+        return isZipped;
+    }
+
     /**
      * Entry point for reading a XWF file.
      * 
@@ -118,8 +131,8 @@ public class XWFReader
     public void read(Object filter, XWFInputFilter proxyFilter)
     {
         InputSource source = this.properties.getSource();
+        this.wikiReader = new WikiReader(filter, proxyFilter);
         if (source instanceof FileInputSource) {
-            this.wikiReader = new WikiReader(filter, proxyFilter);
             try {
                 File inputFile = ((FileInputSource) source).getFile();
                 if (isZip(inputFile)) {
@@ -137,13 +150,21 @@ public class XWFReader
             } catch (IOException e) {
                 this.logger.error("Fail to get file from input source.", e);
             }
+        } else if (source instanceof InputStreamInputSource) {
+            try {
+                InputStream inputStream = ((InputStreamInputSource) source).getInputStream();
+                parseXWFInputStream(inputStream, filter, proxyFilter);
+            } catch (FilterException e) {
+                this.logger.error("Fail to filter from input stream input source", e);
+            } catch (IOException e) {
+                this.logger.error("Fail to get input stream input source.", e);
+            }
         } else {
             this.logger.error("Fail to read XWF file descriptor.");
         }
     }
 
-    private void parseXWFFile(File file, Object filter, XWFInputFilter proxyFilter) throws IOException,
-        FilterException
+    private void parseXWFFile(File file, Object filter, XWFInputFilter proxyFilter) throws IOException, FilterException
     {
         ZipFile zf = new ZipFile(file, ZipFile.OPEN_READ);
         Enumeration<? extends ZipEntry> entries = zf.entries();
@@ -157,6 +178,23 @@ public class XWFReader
 
         wikiReader.finish();
         zf.close();
+    }
+
+    private void parseXWFInputStream(InputStream inputStream, Object filter, XWFInputFilter proxyFilter)
+        throws FilterException, IOException
+    {
+        UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
+        
+        ZipEntry entry = zis.getNextEntry();
+        while (entry != null) {
+            Path path = Paths.get(entry.getName());
+            this.wikiReader.route(path, zis, null);
+            zis.closeEntry();
+            entry = zis.getNextEntry();
+        }
+
+        wikiReader.finish();
+        zis.close(true);
     }
 
     private void parseXWFDir(Path rootPath, Path path, Object filter, XWFInputFilter proxyFilter) throws IOException,

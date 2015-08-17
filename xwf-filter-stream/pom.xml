@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.xwiki.contrib</groupId>
-		<artifactId>api-xwf</artifactId>
+		<artifactId>xwf</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.xwiki.contrib</groupId>
