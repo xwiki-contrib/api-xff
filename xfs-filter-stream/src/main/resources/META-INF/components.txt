@@ -1,0 +1,3 @@
+org.xwiki.filter.xfs.internal.input.XFSReader
+org.xwiki.filter.xfs.internal.input.XFSInputFilterStream
+org.xwiki.filter.xfs.internal.input.XFSInputFilterStreamFactory

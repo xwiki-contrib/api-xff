@@ -1,0 +1,106 @@
+.#------------------------------------------------------------------------------
+.expect|filter+xml
+.#------------------------------------------------------------------------------
+<wiki name="xwiki">
+  <wikiSpace name="MySpace">
+    <wikiDocument name="MyPage1">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a new page</string>
+              </entry>
+            </parameters>
+          </p>
+        </wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+    <wikiDocument name="MyPage2">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a new page</string>
+              </entry>
+            </parameters>
+          </p>
+        </wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+  </wikiSpace>
+  <wikiSpace name="Space">
+    <wikiDocument name="Page">
+      <wikiDocumentLocale>
+        <wikiDocumentRevision revision="1.1">
+          <p>
+            <parameters>
+              <entry>
+                <string>content</string>
+                <string>This is a more powerful content.
+</string>
+              </entry>
+            </parameters>
+          </p>
+          <wikiAttachment name="logo1.png" size="2285">
+            <p>
+              <content></content>
+            </p>
+          </wikiAttachment>
+          <wikiAttachment name="logo2.png" size="2285">
+            <p>
+              <content></content>
+            </p>
+          </wikiAttachment>
+          <wikiClass>
+            <wikiClassProperty name="answer" type="Number">
+              <wikiClassPropertyField name="name" value="answer"></wikiClassPropertyField>
+              <wikiClassPropertyField name="prettyName" value="Answer"></wikiClassPropertyField>
+              <wikiClassPropertyField name="unmodifiable" value="0"></wikiClassPropertyField>
+              <wikiClassPropertyField name="disabled" value="0"></wikiClassPropertyField>
+              <wikiClassPropertyField name="size" value="30"></wikiClassPropertyField>
+              <wikiClassPropertyField name="numberType" value="long"></wikiClassPropertyField>
+              <wikiClassPropertyField name="customDisplay" value="{{velocity}}
+## The core will make available the following variables:
+## - $name[String] = the name of the displayed field ('propertyname')
+## - $prefix[String] = a prefix for the form field ('Space.Class_0_')
+## - $object[com.xpn.xwiki.api.Object] = the displayed object 
+## - $field[com.xpn.xwiki.api.PropertyClass] = the displayed property 
+## - $type[String] = the intended display mode ('view', 'edit', 'hidden', 'search', etc.)
+## - $value[] = the property value
+##
+#if($type == 'view')
+  $value
+#end
+{{/velocity}}
+"></wikiClassPropertyField>
+              <wikiClassPropertyField name="number" value="1"></wikiClassPropertyField>
+              <wikiClassPropertyField name="validationMessage" value=""></wikiClassPropertyField>
+              <wikiClassPropertyField name="validationRegExp" value=""></wikiClassPropertyField>
+            </wikiClassProperty>
+          </wikiClass>
+          <wikiObject name="Space.Page[0]">
+            <wikiObjectProperty name="answer" value="42"></wikiObjectProperty>
+          </wikiObject>
+          <wikiObject name="XWiki.StyleSheetExtension[0]">
+            <wikiObjectProperty name="cache" value="long"></wikiObjectProperty>
+            <wikiObjectProperty name="code" value="body {
+	background: red;
+}
+"></wikiObjectProperty>
+            <wikiObjectProperty name="name" value="theme"></wikiObjectProperty>
+            <wikiObjectProperty name="parse" value=""></wikiObjectProperty>
+            <wikiObjectProperty name="use" value="onDemand"></wikiObjectProperty>
+          </wikiObject>
+        </wikiDocumentRevision>
+      </wikiDocumentLocale>
+    </wikiDocument>
+  </wikiSpace>
+</wiki>
+.#------------------------------------------------------------------------------
+.input|xwiki+xfs/1.0
+.configuration.source=${{{extension.repository}}}/test-1.0.xfs
+.#------------------------------------------------------------------------------
