@@ -1,0 +1,3 @@
+org.xwiki.filter.xff.internal.input.XFFReader
+org.xwiki.filter.xff.internal.input.XFFInputFilterStream
+org.xwiki.filter.xff.internal.input.XFFInputFilterStreamFactory
