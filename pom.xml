@@ -35,6 +35,21 @@
 		<platform.version>7.1.1</platform.version>
 		<xwiki.jacoco.instructionRatio>0.75</xwiki.jacoco.instructionRatio>
 	</properties>
+
+	<scm>
+		<connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
+		<developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
+		<url>https://github.com/xwiki-contrib/api-xff</url>
+	</scm>
+
+	<distributionManagement>
+		<repository>
+			<id>xwiki-staging</id>
+			<name>XWiki Staging Repository</name>
+			<url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
 	<modules>
 		<module>xff-filter-stream</module>
 		<module>xff-rest-api</module>
