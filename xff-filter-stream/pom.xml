@@ -32,7 +32,7 @@
   <description>Filter stream extension to read and write XWiki Filesystem Format (XFF) packages</description>
   <properties>
     <!-- Name to display by the Extension Manager -->
-    <xwiki.extension.name>Filter XFF module</xwiki.extension.name>
+    <xwiki.extension.name>XFF filter</xwiki.extension.name>
   </properties>
   <dependencies>
     <dependency>
