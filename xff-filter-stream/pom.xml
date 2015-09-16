@@ -29,7 +29,7 @@
   <artifactId>xff-filter-stream</artifactId>
   <packaging>jar</packaging>
   <name>XFF - Filter Stream</name>
-  <description>Filter stream extension to read and write XWiki Filesystem Format (XFF) packages</description>
+  <description>Filter stream extension to read and write wiki pages on the filesystem</description>
   <properties>
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>XFF filter</xwiki.extension.name>
