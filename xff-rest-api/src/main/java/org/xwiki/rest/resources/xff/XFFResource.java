@@ -21,7 +21,7 @@ package org.xwiki.rest.resources.xff;
 
 import java.io.InputStream;
 
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -41,6 +41,6 @@ public interface XFFResource
      * @param xff contain the zip file
      * @throws XWikiRestException when any problem is raised
      */
-    @PUT
-    void putXFF(@PathParam("wikiName") String wikiName, InputStream xff) throws XWikiRestException;
+    @POST
+    void postXFF(@PathParam("wikiName") String wikiName, InputStream xff) throws XWikiRestException;
 }

@@ -143,7 +143,7 @@ public class DefaultXFFResource implements XFFResource, XWikiRestComponent
     }
 
     @Override
-    public void putXFF(String wikiName, InputStream xff) throws XWikiRestException
+    public void postXFF(String wikiName, InputStream xff) throws XWikiRestException
     {
         OutputStreamOutputTarget outputStream = new DefaultOutputStreamOutputTarget(null, true);
 
