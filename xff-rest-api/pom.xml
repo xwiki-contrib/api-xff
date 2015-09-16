@@ -19,43 +19,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.xwiki.contrib</groupId>
-		<artifactId>xff</artifactId>
-		<version>0.2-SNAPSHOT</version>
-	</parent>
-	<groupId>org.xwiki.contrib</groupId>
-	<artifactId>xff-rest-api</artifactId>
-	<packaging>jar</packaging>
-	<name>XFF - REST API</name>
-	<description>REST API to deal with XWiki Filesystem Format (XFF) format</description>
-	<properties>
-		<!-- Name to display by the Extension Manager -->
-		<xwiki.extension.name>XFF REST API</xwiki.extension.name>
-	</properties>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.xwiki.contrib</groupId>
+    <artifactId>xff</artifactId>
+    <version>0.2-SNAPSHOT</version>
+  </parent>
+  <groupId>org.xwiki.contrib</groupId>
+  <artifactId>xff-rest-api</artifactId>
+  <packaging>jar</packaging>
+  <name>XFF - REST API</name>
+  <description>REST API to deal with XWiki Filesystem Format (XFF) format</description>
+  <properties>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>XFF REST API</xwiki.extension.name>
+  </properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-component-api</artifactId>
-			<version>${commons.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.platform</groupId>
-			<artifactId>xwiki-platform-rest-api</artifactId>
-			<version>${platform.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.platform</groupId>
-			<artifactId>xwiki-platform-rest-server</artifactId>
-			<version>${platform.version}</version>
-		</dependency>
+  <dependencies>
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>jsr311-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-api</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rest-api</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rest-server</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 </project>

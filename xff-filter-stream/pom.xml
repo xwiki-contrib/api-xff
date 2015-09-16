@@ -19,89 +19,89 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.xwiki.contrib</groupId>
-		<artifactId>xff</artifactId>
-		<version>0.2-SNAPSHOT</version>
-	</parent>
-	<groupId>org.xwiki.contrib</groupId>
-	<artifactId>xff-filter-stream</artifactId>
-	<packaging>jar</packaging>
-	<name>XFF - Filter Stream</name>
-	<description>Filter stream extension to read and write XWiki Filesystem Format (XFF) packages</description>
-	<properties>
-		<!-- Name to display by the Extension Manager -->
-		<xwiki.extension.name>Filter XFF module</xwiki.extension.name>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.platform</groupId>
-			<artifactId>xwiki-platform-filter-event-xwiki</artifactId>
-			<version>${platform.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-filter-event-extension</artifactId>
-			<version>${commons.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-filter-xml</artifactId>
-			<version>${commons.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.platform</groupId>
-			<artifactId>xwiki-platform-xar</artifactId>
-			<version>${platform.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.platform</groupId>
-			<artifactId>xwiki-platform-rest-model</artifactId>
-			<version>${platform.version}</version>
-		</dependency>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.xwiki.contrib</groupId>
+    <artifactId>xff</artifactId>
+    <version>0.2-SNAPSHOT</version>
+  </parent>
+  <groupId>org.xwiki.contrib</groupId>
+  <artifactId>xff-filter-stream</artifactId>
+  <packaging>jar</packaging>
+  <name>XFF - Filter Stream</name>
+  <description>Filter stream extension to read and write XWiki Filesystem Format (XFF) packages</description>
+  <properties>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>Filter XFF module</xwiki.extension.name>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-filter-event-xwiki</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-filter-event-extension</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-filter-xml</artifactId>
+      <version>${commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-xar</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-rest-model</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
 
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-filter-test</artifactId>
-			<version>${commons.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-filter-stream-xml</artifactId>
-			<version>${commons.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-extension-api</artifactId>
-			<version>${commons.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.xwiki.commons</groupId>
-			<artifactId>xwiki-commons-extension-api</artifactId>
-			<version>${commons.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-filter-test</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-filter-stream-xml</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-extension-api</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-extension-api</artifactId>
+      <version>${commons.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
-	<!-- <build> -->
-	<!-- 	<plugins> -->
-	<!-- 		<plugin> -->
-	<!-- 			<!&#45;&#45; Apply the Checkstyle configurations defined in the top level -->
-	<!-- 			   pom.xml file &#45;&#45;> -->
-  <!--  -->
-	<!-- 		  <groupId>org.apache.maven.plugins</groupId> -->
-	<!-- 		  <artifactId>maven&#45;checkstyle&#45;plugin</artifactId> -->
-	<!-- 	  </plugin> -->
-	<!--   </plugins> -->
-  <!-- </build> -->
+  <!-- <build> -->
+    <!--  <plugins> -->
+      <!--    <plugin> -->
+        <!--      <!&#45;&#45; Apply the Checkstyle configurations defined in the top level -->
+        <!--         pom.xml file &#45;&#45;> -->
+        <!--  -->
+        <!--      <groupId>org.apache.maven.plugins</groupId> -->
+        <!--      <artifactId>maven&#45;checkstyle&#45;plugin</artifactId> -->
+        <!--    </plugin> -->
+      <!--   </plugins> -->
+    <!-- </build> -->
 </project>
