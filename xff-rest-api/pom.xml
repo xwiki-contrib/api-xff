@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>xff</artifactId>
-    <version>0.3</version>
+    <version>0.4-SNAPSHOT</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>xff-rest-api</artifactId>
@@ -35,7 +35,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
     <url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-rest-api</url>
-    <tag>xff-0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
