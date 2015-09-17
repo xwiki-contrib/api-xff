@@ -27,7 +27,7 @@
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>xff</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.3</version>
   <packaging>pom</packaging>
   <name>XFF - Parent POM</name>
   <description>APIs for the Xwiki Filesystem Format (XFF) format</description>
@@ -40,7 +40,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
     <url>https://github.com/xwiki-contrib/api-xff</url>
-    <tag>HEAD</tag>
+    <tag>xff-0.3</tag>
   </scm>
 
   <distributionManagement>
