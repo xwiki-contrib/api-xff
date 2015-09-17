@@ -30,6 +30,14 @@
   <packaging>jar</packaging>
   <name>XFF - REST API</name>
   <description>REST API to deal with XWiki Filesystem Format (XFF) format</description>
+
+  <scm>
+    <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
+    <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
+    <url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-rest-api</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>XFF REST API</xwiki.extension.name>
@@ -56,6 +64,5 @@
       <artifactId>xwiki-platform-rest-server</artifactId>
       <version>${platform.version}</version>
     </dependency>
-
   </dependencies>
 </project>

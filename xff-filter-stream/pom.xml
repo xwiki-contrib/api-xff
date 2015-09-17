@@ -30,10 +30,19 @@
   <packaging>jar</packaging>
   <name>XFF - Filter Stream</name>
   <description>Filter stream extension to read and write wiki pages on the filesystem</description>
+
+  <scm>
+    <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
+    <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
+    <url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-filter-stream</url>
+    <tag>HEAD</tag>
+  </scm>
+
   <properties>
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>XFF filter</xwiki.extension.name>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>commons-codec</groupId>
