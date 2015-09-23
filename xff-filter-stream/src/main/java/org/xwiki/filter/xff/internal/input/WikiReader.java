@@ -51,7 +51,7 @@ public class WikiReader extends AbstractReader
      * Contain the model of a wiki (see xwiki-platform-rest-model).
      */
     private Wiki xWiki = new Wiki();
-    
+
     /**
      * Retain information about if a wiki has been opened.
      */
@@ -113,7 +113,14 @@ public class WikiReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path wikiPath = path.subpath(0, 1);
+        Path wikiPath;
+        try {
+            wikiPath = path.subpath(0, 1);
+        } catch (IllegalArgumentException e) {
+            String message = String.format("Unable to extract wiki path from '%s'.", path.toString());
+            throw new FilterException(message);
+        }
+
         // Close previous wiki before starting a new one
         if (!wikiPath.equals(this.previousWikiPath)) {
             this.finish();

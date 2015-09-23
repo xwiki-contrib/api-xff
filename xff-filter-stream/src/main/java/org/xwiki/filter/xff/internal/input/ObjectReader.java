@@ -156,7 +156,13 @@ public class ObjectReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path objectPath = path.subpath(0, 6);
+        Path objectPath;
+        try {
+            objectPath = path.subpath(0, 6);
+        } catch (IllegalArgumentException e) {
+            String message = String.format("Unable to extract object path from '%s'.", path.toString());
+            throw new FilterException(message);
+        }
 
         // Close previous object before starting a new one
         if (!objectPath.equals(this.previousObjectPath)) {

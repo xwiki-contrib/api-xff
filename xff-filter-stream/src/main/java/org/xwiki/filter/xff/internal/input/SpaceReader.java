@@ -119,7 +119,13 @@ public class SpaceReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path spacePath = path.subpath(0, 2);
+        Path spacePath;
+        try {
+            spacePath = path.subpath(0, 2);
+        } catch (IllegalArgumentException e) {
+            String message = String.format("Unable to extract space path from '%s'.", path.toString());
+            throw new FilterException(message);
+        }
 
         // Close previous space before starting a new one
         if (!spacePath.equals(this.previousSpacePath)) {

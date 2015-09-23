@@ -148,7 +148,13 @@ public class ClassReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path classPath = path.subpath(0, 4);
+        Path classPath;
+        try {
+            classPath = path.subpath(0, 4);
+        } catch (IllegalArgumentException e) {
+            String message = String.format("Unable to extract class path from '%s'.", path.toString());
+            throw new FilterException(message);
+        }
 
         // Close previous class before starting a new one
         if (!classPath.equals(this.previousClassPath)) {

@@ -202,8 +202,15 @@ public class PageReader extends AbstractReader
     @Override
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
-        Path pagePath = path.subpath(0, 3);
-        Path pageElementPath = path.subpath(0, 4);
+        Path pagePath;
+        Path pageElementPath;
+        try {
+            pagePath = path.subpath(0, 3);
+            pageElementPath = path.subpath(0, 4);
+        } catch (IllegalArgumentException e) {
+            String message = String.format("Unable to extract page (or elements) path from '%s'.", path.toString());
+            throw new FilterException(message);
+        }
 
         // Close previous page and sub-paths before starting a new one
         if (!pageElementPath.equals(this.previousPageElementPath)) {
@@ -226,17 +233,23 @@ public class PageReader extends AbstractReader
             if (!this.started) {
                 this.start();
             }
-
-            if (pageElementPath.endsWith("attachments")) {
-                this.attachmentReader.route(path, inputStream, this.reference);
-            } else if (pageElementPath.endsWith("class")) {
-                this.classReader.route(path, inputStream, this.reference);
-            } else if (pageElementPath.endsWith("objects")) {
-                this.objectReader.route(path, inputStream, this.reference);
-            }
+            String pageElement = pageElementPath.getName(pageElementPath.getNameCount() - 1).toString();
+            this.route(path, inputStream, parentReference, pageElement);
             this.previousPageElementPath = pageElementPath;
         }
         this.previousPagePath = pagePath;
+    }
+
+    private void route(Path path, InputStream inputStream, EntityReference parentReference, String pageElement)
+        throws FilterException
+    {
+        if (pageElement.equals("attachments")) {
+            this.attachmentReader.route(path, inputStream, this.reference);
+        } else if (pageElement.equals("class")) {
+            this.classReader.route(path, inputStream, this.reference);
+        } else if (pageElement.equals("objects")) {
+            this.objectReader.route(path, inputStream, this.reference);
+        }
     }
 
     private void finishPageElements() throws FilterException

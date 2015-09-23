@@ -171,9 +171,11 @@ public class XFFReader
 
         while (entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
-            Path path = Paths.get(entry.getName());
-            InputStream inputStream = zf.getInputStream(entry);
-            this.wikiReader.route(path, inputStream, null);
+            if (!entry.isDirectory()) {
+                Path path = Paths.get(entry.getName());
+                InputStream inputStream = zf.getInputStream(entry);
+                this.wikiReader.route(path, inputStream, null);
+            }
         }
 
         wikiReader.finish();
@@ -184,11 +186,13 @@ public class XFFReader
         throws FilterException, IOException
     {
         UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
-        
+
         ZipEntry entry = zis.getNextEntry();
         while (entry != null) {
-            Path path = Paths.get(entry.getName());
-            this.wikiReader.route(path, zis, null);
+            if (!entry.isDirectory()) {
+                Path path = Paths.get(entry.getName());
+                this.wikiReader.route(path, zis, null);
+            }
             zis.closeEntry();
             entry = zis.getNextEntry();
         }
