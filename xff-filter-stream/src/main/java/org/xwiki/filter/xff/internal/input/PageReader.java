@@ -158,6 +158,8 @@ public class PageReader extends AbstractReader
         // TODO: Create a more generic parser for parameters
         FilterEventParameters params = new FilterEventParameters();
         params.put(XarDocumentModel.ELEMENT_CONTENT, this.xPage.getContent());
+        params.put(XarDocumentModel.ELEMENT_TITLE, this.xPage.getTitle());
+        params.put(XarDocumentModel.ELEMENT_PARENT, this.xPage.getParent());
         return params;
     }
 

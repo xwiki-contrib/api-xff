@@ -12,6 +12,14 @@
                 <string>content</string>
                 <string>This is a new page</string>
               </entry>
+              <entry>
+                <string>title</string>
+                <string>Hello MyPage1!</string>
+              </entry>
+              <entry>
+                <string>parent</string>
+                <string>MySpace.WebHome</string>
+              </entry>
             </parameters>
           </p>
         </wikiDocumentRevision>
@@ -25,6 +33,14 @@
               <entry>
                 <string>content</string>
                 <string>This is a new page</string>
+              </entry>
+              <entry>
+                <string>title</string>
+                <string>Hello MyPage2!</string>
+              </entry>
+              <entry>
+                <string>parent</string>
+                <string>MySpace.WebHome</string>
               </entry>
             </parameters>
           </p>
@@ -42,6 +58,14 @@
                 <string>content</string>
                 <string>This is a more powerful content.
 </string>
+              </entry>
+              <entry>
+                <string>title</string>
+                <string>Hello world!</string>
+              </entry>
+              <entry>
+                <string>parent</string>
+                <string>Space.WebHome</string>
               </entry>
             </parameters>
           </p>
