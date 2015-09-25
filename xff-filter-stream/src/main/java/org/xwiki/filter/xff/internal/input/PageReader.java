@@ -27,12 +27,12 @@ import java.util.Locale;
 import org.apache.commons.io.IOUtils;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
+import org.xwiki.filter.event.model.WikiDocumentFilter;
 import org.xwiki.filter.xff.input.AbstractReader;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.EntityReference;
 import org.xwiki.model.reference.SpaceReference;
 import org.xwiki.rest.model.jaxb.Page;
-import org.xwiki.xar.internal.model.XarDocumentModel;
 
 /**
  * Read file from XFF and parse them or reroute them to child readers.
@@ -157,9 +157,9 @@ public class PageReader extends AbstractReader
     {
         // TODO: Create a more generic parser for parameters
         FilterEventParameters params = new FilterEventParameters();
-        params.put(XarDocumentModel.ELEMENT_CONTENT, this.xPage.getContent());
-        params.put(XarDocumentModel.ELEMENT_TITLE, this.xPage.getTitle());
-        params.put(XarDocumentModel.ELEMENT_PARENT, this.xPage.getParent());
+        params.put(WikiDocumentFilter.PARAMETER_CONTENT, this.xPage.getContent());
+        params.put(WikiDocumentFilter.PARAMETER_TITLE, this.xPage.getTitle());
+        params.put(WikiDocumentFilter.PARAMETER_PARENT, this.xPage.getParent());
         return params;
     }
 

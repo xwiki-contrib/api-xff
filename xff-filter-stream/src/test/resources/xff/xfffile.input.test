@@ -17,7 +17,7 @@
                 <string>Hello MyPage1!</string>
               </entry>
               <entry>
-                <string>parent</string>
+                <string>parent_reference</string>
                 <string>MySpace.WebHome</string>
               </entry>
             </parameters>
@@ -39,7 +39,7 @@
                 <string>Hello MyPage2!</string>
               </entry>
               <entry>
-                <string>parent</string>
+                <string>parent_reference</string>
                 <string>MySpace.WebHome</string>
               </entry>
             </parameters>
@@ -64,7 +64,7 @@
                 <string>Hello world!</string>
               </entry>
               <entry>
-                <string>parent</string>
+                <string>parent_reference</string>
                 <string>Space.WebHome</string>
               </entry>
             </parameters>
