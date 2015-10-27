@@ -76,16 +76,6 @@
     </repository>
   </repositories>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.5.201505241946</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <modules>
     <module>xff-filter-stream</module>
     <module>xff-rest-api</module>
@@ -95,8 +85,14 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.eluder.coveralls</groupId>
+          <artifactId>coveralls-maven-plugin</artifactId>
+          <version>4.0.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.7.5.201505241946</version>
           <executions>
             <execution>
               <id>default-prepare-agent</id>
