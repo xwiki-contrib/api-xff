@@ -9,4 +9,4 @@ jdk:
     - openjdk7
 
 after_success:
-    - mvn clean test -Pquality coveralls:report
+    - mvn clean test -Pquality jacoco:report coveralls:report
