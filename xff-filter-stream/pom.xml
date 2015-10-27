@@ -102,12 +102,15 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+  <!-- <build> -->
+    <!--  <plugins> -->
+      <!--    <plugin> -->
+        <!--      <!&#45;&#45; Apply the Checkstyle configurations defined in the top level -->
+        <!--         pom.xml file &#45;&#45;> -->
+        <!--  -->
+        <!--      <groupId>org.apache.maven.plugins</groupId> -->
+        <!--      <artifactId>maven&#45;checkstyle&#45;plugin</artifactId> -->
+        <!--    </plugin> -->
+      <!--   </plugins> -->
+    <!-- </build> -->
 </project>
