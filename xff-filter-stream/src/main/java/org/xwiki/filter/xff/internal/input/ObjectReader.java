@@ -43,7 +43,7 @@ public class ObjectReader extends AbstractReader
     /**
      * Name of the file to describe an object.
      */
-    static final String OBJECT_FILENAME = "__object.xml";
+    private static final String OBJECT_FILENAME = "__object.xml";
 
     /**
      * Reference to the current document.

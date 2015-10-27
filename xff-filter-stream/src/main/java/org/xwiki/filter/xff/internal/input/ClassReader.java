@@ -44,7 +44,7 @@ public class ClassReader extends AbstractReader
     /**
      * Name of the file to describe a class.
      */
-    static final String CLASS_FILENAME = "__class.xml";
+    private static final String CLASS_FILENAME = "__class.xml";
 
     /**
      * Reference to the current document.
@@ -108,7 +108,7 @@ public class ClassReader extends AbstractReader
         }
     }
 
-    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    private void init(InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
@@ -162,7 +162,7 @@ public class ClassReader extends AbstractReader
         }
         // Parse files relative to page or reroute them
         if (path.endsWith(ClassReader.CLASS_FILENAME)) {
-            this.init(classPath, inputStream, parentReference);
+            this.init(inputStream, parentReference);
         } else if (classPath.relativize(path).toString().startsWith("_metadata")) {
             this.routeMetadata(path, inputStream);
         } else {

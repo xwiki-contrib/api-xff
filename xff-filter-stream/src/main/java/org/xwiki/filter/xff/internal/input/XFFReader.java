@@ -136,12 +136,12 @@ public class XFFReader
             try {
                 File inputFile = ((FileInputSource) source).getFile();
                 if (isZip(inputFile)) {
-                    parseXFFFile(inputFile, filter, proxyFilter);
+                    parseXFFFile(inputFile);
                 } else if (inputFile.isDirectory()) {
                     Path relativePath = Paths.get(inputFile.getPath());
                     Path rootPath = Paths.get("/", relativePath.subpath(0, relativePath.getNameCount() - 1).toString());
                     Path path = relativePath.getName(relativePath.getNameCount() - 1);
-                    parseXFFDir(rootPath, path, filter, proxyFilter);
+                    parseXFFDir(rootPath, path);
                 } else {
                     this.logger.error("Don't know how to parse this kind of XFF format");
                 }
@@ -153,7 +153,7 @@ public class XFFReader
         } else if (source instanceof InputStreamInputSource) {
             try {
                 InputStream inputStream = ((InputStreamInputSource) source).getInputStream();
-                parseXFFInputStream(inputStream, filter, proxyFilter);
+                parseXFFInputStream(inputStream);
             } catch (FilterException e) {
                 this.logger.error("Fail to filter from input stream input source", e);
             } catch (IOException e) {
@@ -164,7 +164,7 @@ public class XFFReader
         }
     }
 
-    private void parseXFFFile(File file, Object filter, XFFInputFilter proxyFilter) throws IOException, FilterException
+    private void parseXFFFile(File file) throws IOException, FilterException
     {
         ZipFile zf = new ZipFile(file, ZipFile.OPEN_READ);
         Enumeration<? extends ZipEntry> entries = zf.entries();
@@ -182,7 +182,7 @@ public class XFFReader
         zf.close();
     }
 
-    private void parseXFFInputStream(InputStream inputStream, Object filter, XFFInputFilter proxyFilter)
+    private void parseXFFInputStream(InputStream inputStream)
         throws FilterException, IOException
     {
         UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
@@ -201,7 +201,7 @@ public class XFFReader
         zis.close(true);
     }
 
-    private void parseXFFDir(Path rootPath, Path path, Object filter, XFFInputFilter proxyFilter) throws IOException,
+    private void parseXFFDir(Path rootPath, Path path) throws IOException,
         FilterException
     {
         Path filePath = Paths.get(rootPath.toString(), path.toString());
@@ -216,7 +216,7 @@ public class XFFReader
             Arrays.sort(subPaths);
             for (String filename : subPaths) {
                 Path subPath = Paths.get(path.toString(), filename);
-                parseXFFDir(rootPath, subPath, filter, proxyFilter);
+                parseXFFDir(rootPath, subPath);
             }
         }
         if (path.getNameCount() == 1) {

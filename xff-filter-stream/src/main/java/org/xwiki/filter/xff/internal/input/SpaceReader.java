@@ -40,7 +40,7 @@ public class SpaceReader extends AbstractReader
     /**
      * Name of the file to describe a space.
      */
-    static final String SPACE_FILENAME = "__space.xml";
+    private static final String SPACE_FILENAME = "__space.xml";
 
     /**
      * Reference to the current space.
@@ -63,11 +63,6 @@ public class SpaceReader extends AbstractReader
     private Path previousSpacePath;
 
     /**
-     * Retain the last page path in order to close and reinit if the current page is a new one.
-     */
-    private Path previousPagePath;
-
-    /**
      * Child reader for page.
      */
     private PageReader pageReader;
@@ -88,7 +83,6 @@ public class SpaceReader extends AbstractReader
     {
         this.reference = null;
         this.xSpace = new Space();
-        this.previousPagePath = null;
         this.started = false;
     }
 

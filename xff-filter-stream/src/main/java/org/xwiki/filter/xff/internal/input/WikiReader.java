@@ -40,7 +40,7 @@ public class WikiReader extends AbstractReader
     /**
      * Name of the file to describe a wiki.
      */
-    static final String WIKI_FILENAME = "__wiki.xml";
+    private static final String WIKI_FILENAME = "__wiki.xml";
 
     /**
      * Reference to the current wiki.
@@ -91,7 +91,7 @@ public class WikiReader extends AbstractReader
         this.reference = new WikiReference(wikiName);
     }
 
-    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    private void init(Path path, InputStream inputStream) throws FilterException
     {
         this.reset();
         if (inputStream != null) {
@@ -127,11 +127,11 @@ public class WikiReader extends AbstractReader
         }
         // Parse files relative to wiki or reroute them to the SpaceReader
         if (path.endsWith(WikiReader.WIKI_FILENAME)) {
-            this.init(path, inputStream, parentReference);
+            this.init(path, inputStream);
         } else {
             // If the wiki has not been initialized, initializes it with only the path
             if (this.reference == null) {
-                this.init(path, null, parentReference);
+                this.init(path, null);
             }
             // Before routing any other file, start the wiki
             if (!this.started) {

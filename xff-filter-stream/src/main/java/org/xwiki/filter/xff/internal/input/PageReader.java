@@ -45,7 +45,7 @@ public class PageReader extends AbstractReader
     /**
      * Name of the file to describe a page.
      */
-    static final String PAGE_FILENAME = "__page.xml";
+    private static final String PAGE_FILENAME = "__page.xml";
 
     /**
      * The used locale for Document Locale.
@@ -236,20 +236,20 @@ public class PageReader extends AbstractReader
                 this.start();
             }
             String pageElement = pageElementPath.getName(pageElementPath.getNameCount() - 1).toString();
-            this.route(path, inputStream, parentReference, pageElement);
+            this.route(path, inputStream, pageElement);
             this.previousPageElementPath = pageElementPath;
         }
         this.previousPagePath = pagePath;
     }
 
-    private void route(Path path, InputStream inputStream, EntityReference parentReference, String pageElement)
+    private void route(Path path, InputStream inputStream, String pageElement)
         throws FilterException
     {
-        if (pageElement.equals("attachments")) {
+        if ("attachments".equals(pageElement)) {
             this.attachmentReader.route(path, inputStream, this.reference);
-        } else if (pageElement.equals("class")) {
+        } else if ("class".equals(pageElement)) {
             this.classReader.route(path, inputStream, this.reference);
-        } else if (pageElement.equals("objects")) {
+        } else if ("objects".equals(pageElement)) {
             this.objectReader.route(path, inputStream, this.reference);
         }
     }
