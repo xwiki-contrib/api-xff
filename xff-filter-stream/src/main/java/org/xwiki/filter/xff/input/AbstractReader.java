@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xff.internal.input.XFFInputFilter;
 import org.xwiki.model.reference.EntityReference;
@@ -43,8 +44,7 @@ public abstract class AbstractReader
     /**
      * Logger to report errors, warnings, etc.
      */
-    @Inject
-    protected Logger logger;
+    protected Logger logger = LoggerFactory.getLogger(AbstractReader.class);
 
     /**
      * Filter.
