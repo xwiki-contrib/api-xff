@@ -122,8 +122,8 @@
         </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
-  </wikiSpace>
-</wiki>
+    <wikiSpace name="xwiki:Space"></wikiSpace>
+    <wiki name="xwiki"></wiki>
 .#------------------------------------------------------------------------------
 .input|xwiki+xff/1.0
 .configuration.source=${{{extension.repository}}}/xwiki

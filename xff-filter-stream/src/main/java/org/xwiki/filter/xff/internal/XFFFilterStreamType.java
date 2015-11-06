@@ -57,5 +57,4 @@ public class XFFFilterStreamType extends FilterStreamType
     {
         super(type, dataFormat);
     }
-
 }

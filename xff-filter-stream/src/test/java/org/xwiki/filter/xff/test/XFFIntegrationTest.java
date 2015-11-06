@@ -17,7 +17,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.filter.xff;
+package org.xwiki.filter.xff.test;
 
 import java.io.File;
 import java.util.Date;
