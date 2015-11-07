@@ -71,7 +71,7 @@ public class AttachmentReader extends AbstractReader
         this.reference = new AttachmentReference(attachmentName, (DocumentReference) parentReference);
     }
 
-    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    private void init(Path path, EntityReference parentReference) throws FilterException
     {
         this.reset();
         String attachmentName = path.getFileName().toString();
@@ -82,7 +82,7 @@ public class AttachmentReader extends AbstractReader
     public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
     {
         byte[] bytes;
-        this.init(path, null, parentReference);
+        this.init(path, parentReference);
         try {
             bytes = IOUtils.toByteArray(inputStream);
             // FIXME: Why do we need length if we use an InputStream?
