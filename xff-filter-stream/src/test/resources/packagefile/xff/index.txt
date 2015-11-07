@@ -1,0 +1,13 @@
+xwiki/wiki.xml
+xwiki/MySpace/MyPage1/page.xml
+xwiki/MySpace/MyPage2/page.xml
+xwiki/Space/space.xml
+xwiki/Space/Page/page.xml
+xwiki/Space/Page/metadata/content.xwiki21
+xwiki/Space/Page/attachments/logo1.png
+xwiki/Space/Page/attachments/logo2.png
+xwiki/Space/Page/class/class.xml
+xwiki/Space/Page/class/metadata/answer/customDisplay.xwiki21
+xwiki/Space/Page/objects/Space.Page/0/object.xml
+xwiki/Space/Page/objects/XWiki.StyleSheetExtension/0/object.xml
+xwiki/Space/Page/objects/XWiki.StyleSheetExtension/0/metadata/code.css

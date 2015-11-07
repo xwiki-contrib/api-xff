@@ -40,7 +40,7 @@ public class SpaceReader extends AbstractReader
     /**
      * Name of the file to describe a space.
      */
-    private static final String SPACE_FILENAME = "__space.xml";
+    private static final String SPACE_FILENAME = "space.xml";
 
     /**
      * Reference to the current space.
@@ -97,7 +97,7 @@ public class SpaceReader extends AbstractReader
         if (inputStream != null) {
             this.xSpace = (Space) this.unmarshal(inputStream, Space.class);
         }
-        String spaceName = this.xSpace.getId();
+        String spaceName = this.xSpace.getName();
         if (spaceName == null) {
             spaceName = path.getName(1).toString();
         }

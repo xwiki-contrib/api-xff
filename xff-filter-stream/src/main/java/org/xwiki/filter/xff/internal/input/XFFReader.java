@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -44,6 +42,7 @@ import org.xwiki.filter.input.FileInputSource;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
 import org.xwiki.filter.xff.input.XFFInputProperties;
+import org.xwiki.filter.xff.internal.Index;
 import org.xwiki.filter.xff.internal.UncloseableZipInputStream;
 
 /**
@@ -138,10 +137,8 @@ public class XFFReader
                 if (isZip(inputFile)) {
                     parseXFFFile(inputFile);
                 } else if (inputFile.isDirectory()) {
-                    Path relativePath = Paths.get(inputFile.getPath());
-                    Path rootPath = Paths.get("/", relativePath.subpath(0, relativePath.getNameCount() - 1).toString());
-                    Path path = relativePath.getName(relativePath.getNameCount() - 1);
-                    parseXFFDir(rootPath, path);
+                    Path path = Paths.get(inputFile.getPath());
+                    parseXFFDir(path);
                 } else {
                     this.logger.error("Don't know how to parse this kind of XFF format");
                 }
@@ -167,23 +164,26 @@ public class XFFReader
     private void parseXFFFile(File file) throws IOException, FilterException
     {
         ZipFile zf = new ZipFile(file, ZipFile.OPEN_READ);
-        Enumeration<? extends ZipEntry> entries = zf.entries();
+        ZipEntry indexEntry = zf.getEntry(Index.INDEX_FILENAME);
+        if (indexEntry != null) {
+            InputStream indexStream = zf.getInputStream(indexEntry);
+            Index index = new Index(indexStream);
 
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (!entry.isDirectory()) {
-                Path path = Paths.get(entry.getName());
-                InputStream inputStream = zf.getInputStream(entry);
-                this.wikiReader.route(path, inputStream, null);
+            while (index.hasMoreElements()) {
+                Path path = index.nextElement();
+                ZipEntry entry = zf.getEntry(path.toString());
+                if (!entry.isDirectory()) {
+                    InputStream inputStream = zf.getInputStream(entry);
+                    this.wikiReader.route(path, inputStream, null);
+                }
             }
-        }
 
-        wikiReader.finish();
-        zf.close();
+            wikiReader.finish();
+            zf.close();
+        }
     }
 
-    private void parseXFFInputStream(InputStream inputStream)
-        throws FilterException, IOException
+    private void parseXFFInputStream(InputStream inputStream) throws FilterException, IOException
     {
         UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
 
@@ -201,26 +201,20 @@ public class XFFReader
         zis.close(true);
     }
 
-    private void parseXFFDir(Path rootPath, Path path) throws IOException,
-        FilterException
+    private void parseXFFDir(Path rootPath) throws IOException, FilterException
     {
-        Path filePath = Paths.get(rootPath.toString(), path.toString());
-        File file = new File(filePath.toString());
-        if (file.isFile()) {
-            InputStream inputStream = new FileInputStream(file);
-            this.wikiReader.route(path, inputStream, null);
-        }
-
-        if (file.isDirectory()) {
-            String[] subPaths = file.list();
-            Arrays.sort(subPaths);
-            for (String filename : subPaths) {
-                Path subPath = Paths.get(path.toString(), filename);
-                parseXFFDir(rootPath, subPath);
+        Path indexPath = Paths.get(rootPath.toString(), Index.INDEX_FILENAME);
+        Index index = new Index(indexPath);
+        while (index.hasMoreElements()) {
+            Path path = index.nextElement();
+            Path filePath = rootPath.resolve(path);
+            File file = new File(filePath.toUri());
+            if (!file.isDirectory()) {
+                InputStream inputStream = new FileInputStream(file);
+                this.wikiReader.route(path, inputStream, null);
+                inputStream.close();
             }
         }
-        if (path.getNameCount() == 1) {
-            this.wikiReader.finish();
-        }
+        wikiReader.finish();
     }
 }

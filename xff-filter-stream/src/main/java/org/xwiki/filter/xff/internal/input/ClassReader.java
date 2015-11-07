@@ -44,7 +44,7 @@ public class ClassReader extends AbstractReader
     /**
      * Name of the file to describe a class.
      */
-    private static final String CLASS_FILENAME = "__class.xml";
+    private static final String CLASS_FILENAME = "class.xml";
 
     /**
      * Reference to the current document.
@@ -163,7 +163,7 @@ public class ClassReader extends AbstractReader
         // Parse files relative to page or reroute them
         if (path.endsWith(ClassReader.CLASS_FILENAME)) {
             this.init(inputStream, parentReference);
-        } else if (classPath.relativize(path).toString().startsWith("_metadata")) {
+        } else if (classPath.relativize(path).toString().startsWith("metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             String message = String.format("ClassReader don't know how to route '%s'.", path.toString());

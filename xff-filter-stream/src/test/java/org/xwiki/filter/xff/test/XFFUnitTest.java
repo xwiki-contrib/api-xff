@@ -37,7 +37,7 @@ import org.xwiki.rest.model.jaxb.Wiki;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class XFFUnitTesting
+public class XFFUnitTest
 {
     @Test
     public void malformedXML()

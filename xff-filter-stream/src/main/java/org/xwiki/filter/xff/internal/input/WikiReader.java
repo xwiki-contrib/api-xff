@@ -40,7 +40,7 @@ public class WikiReader extends AbstractReader
     /**
      * Name of the file to describe a wiki.
      */
-    private static final String WIKI_FILENAME = "__wiki.xml";
+    private static final String WIKI_FILENAME = "wiki.xml";
 
     /**
      * Reference to the current wiki.
@@ -97,7 +97,7 @@ public class WikiReader extends AbstractReader
         if (inputStream != null) {
             this.xWiki = (Wiki) this.unmarshal(inputStream, Wiki.class);
         }
-        String wikiName = this.xWiki.getId();
+        String wikiName = this.xWiki.getName();
         if (wikiName == null) {
             wikiName = path.getName(0).toString();
         }

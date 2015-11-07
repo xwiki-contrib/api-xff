@@ -45,7 +45,7 @@ public class PageReader extends AbstractReader
     /**
      * Name of the file to describe a page.
      */
-    private static final String PAGE_FILENAME = "__page.xml";
+    private static final String PAGE_FILENAME = "page.xml";
 
     /**
      * The used locale for Document Locale.
@@ -224,7 +224,7 @@ public class PageReader extends AbstractReader
         // Parse files relative to page or reroute them
         if (path.endsWith(PageReader.PAGE_FILENAME)) {
             this.init(path, inputStream, parentReference);
-        } else if (pageElementPath.endsWith("_metadata")) {
+        } else if (pageElementPath.endsWith("metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             // If the page has not been initialized, initializes it with only the path

@@ -48,8 +48,8 @@ public class XFFIntegrationTest
         ExtensionPackager extensionPackager = new ExtensionPackager(null, folder);
         extensionPackager.generateExtensions();
         
-        File xffDirSrc = new File("target/test-classes/packagefile/xff/xwiki");
-        File xffDirDst = new File(folder.toString() + "/xwiki");
+        File xffDirSrc = new File("target/test-classes/packagefile/xff");
+        File xffDirDst = new File(folder.toString() + "/xffdir");
         FileUtils.copyDirectoryStructure(xffDirSrc, xffDirDst);
 
         System.setProperty("extension.repository", folder.getAbsolutePath());

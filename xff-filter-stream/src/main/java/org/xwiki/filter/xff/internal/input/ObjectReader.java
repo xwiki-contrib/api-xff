@@ -43,7 +43,7 @@ public class ObjectReader extends AbstractReader
     /**
      * Name of the file to describe an object.
      */
-    private static final String OBJECT_FILENAME = "__object.xml";
+    private static final String OBJECT_FILENAME = "object.xml";
 
     /**
      * Reference to the current document.
@@ -171,7 +171,7 @@ public class ObjectReader extends AbstractReader
         // Parse files relative to page or reroute them
         if (path.endsWith(ObjectReader.OBJECT_FILENAME)) {
             this.init(objectPath, inputStream, parentReference);
-        } else if (objectPath.relativize(path).toString().startsWith("_metadata")) {
+        } else if (objectPath.relativize(path).toString().startsWith("metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             String message = String.format("ObjectReader don't know how to route '%s'.", path.toString());
