@@ -22,7 +22,6 @@ package org.xwiki.filter.xff.input;
 import java.io.InputStream;
 import java.nio.file.Path;
 
-import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;

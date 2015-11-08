@@ -22,10 +22,11 @@ package org.xwiki.filter.xff.test;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.Test;
 import org.xwiki.filter.FilterException;
-import org.xwiki.filter.xff.internal.input.AttachmentReader;
 import org.xwiki.filter.xff.internal.input.ClassReader;
 import org.xwiki.filter.xff.internal.input.ObjectReader;
 import org.xwiki.filter.xff.internal.input.PageReader;
@@ -33,9 +34,6 @@ import org.xwiki.filter.xff.internal.input.SpaceReader;
 import org.xwiki.filter.xff.internal.input.WikiReader;
 import org.xwiki.filter.xff.test.internal.TestReader;
 import org.xwiki.rest.model.jaxb.Wiki;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class XFFUnitTest
 {
@@ -47,7 +45,7 @@ public class XFFUnitTest
         assertNull(testReader.publicUnmarshal(inputStream, Wiki.class));
     }
 
-    @Test(expected = org.xwiki.filter.FilterException.class)
+    @Test(expected = FilterException.class)
     public void wrongPathWiki() throws FilterException
     {
         WikiReader wikiReader = new WikiReader(null, null);
