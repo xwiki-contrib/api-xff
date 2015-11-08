@@ -23,7 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import javax.inject.Named;
+
 import org.apache.commons.io.IOUtils;
+import org.xwiki.component.annotation.Component;
+import org.xwiki.component.annotation.InstantiationStrategy;
+import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xff.input.AbstractReader;
@@ -38,7 +43,10 @@ import org.xwiki.rest.model.jaxb.Property;
  * @version $Id$
  * @since 7.1
  */
-public class ObjectReader extends AbstractReader
+@Component
+@Named("objects")
+@InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
+public class ObjectsReader extends AbstractReader
 {
     /**
      * Name of the file to describe an object.
@@ -61,43 +69,20 @@ public class ObjectReader extends AbstractReader
     private org.xwiki.rest.model.jaxb.Object xObject = new org.xwiki.rest.model.jaxb.Object();
 
     /**
-     * Retain information about if a object has been opened.
-     */
-    private boolean started;
-
-    /**
-     * Retain the last object in order to close and reinit if the current object is a new one.
-     */
-    private Path previousObjectPath;
-
-    /**
      * Parameters to send to the current class.
      */
     private FilterEventParameters parameters = FilterEventParameters.EMPTY;
 
-    /**
-     * Constructor that only call the abstract constructor.
-     * 
-     * @param filter is the input filter
-     * @param proxyFilter is the output filter
-     */
-    public ObjectReader(Object filter, XFFInputFilter proxyFilter)
+    private void parseObject(InputStream inputStream) throws FilterException
     {
-        super(filter, proxyFilter);
-    }
-
-    private void reset()
-    {
-        this.reference = null;
-        this.number = -1;
-        this.xObject = new org.xwiki.rest.model.jaxb.Object();
-        this.parameters = FilterEventParameters.EMPTY;
-        this.started = false;
-    }
-
-    private void setReference(String className, EntityReference parentReference)
-    {
-        this.reference = new ObjectReference(className, (DocumentReference) parentReference);
+        if (inputStream != null) {
+            this.xObject =
+                (org.xwiki.rest.model.jaxb.Object) this.unmarshal(inputStream, org.xwiki.rest.model.jaxb.Object.class);
+        }
+        String objectName = this.xObject.getId();
+        if (objectName != null) {
+            this.reference = new ObjectReference(objectName, (DocumentReference) this.reference.getParent());
+        }
     }
 
     private String getName()
@@ -116,25 +101,19 @@ public class ObjectReader extends AbstractReader
         }
     }
 
-    private void init(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
-    {
-        this.reset();
-        if (inputStream != null) {
-            this.xObject =
-                (org.xwiki.rest.model.jaxb.Object) this.unmarshal(inputStream, org.xwiki.rest.model.jaxb.Object.class);
-        }
-        String objectName = this.xObject.getClassName();
-        if (objectName == null) {
-            objectName = path.getName(4).toString();
-        }
-        this.setReference(objectName, parentReference);
-        this.number = Integer.parseInt(path.getName(5).toString());
-    }
-
     private void start() throws FilterException
     {
-        this.proxyFilter.beginWikiObject(this.getName(), this.parameters);
-        this.started = true;
+        if (!this.started) {
+            this.proxyFilter.beginWikiObject(this.getName(), this.parameters);
+            this.started = true;
+        }
+    }
+
+    private void end() throws FilterException
+    {
+        if (this.started) {
+            this.proxyFilter.endWikiObject(this.getName(), this.parameters);
+        }
     }
 
     private void routeMetadata(Path path, InputStream inputStream) throws FilterException
@@ -154,42 +133,42 @@ public class ObjectReader extends AbstractReader
     }
 
     @Override
-    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    public void open(String id, EntityReference parentReference, Object filter, XFFInputFilter proxyFilter)
+        throws FilterException
     {
-        Path objectPath;
-        try {
-            objectPath = path.subpath(0, 6);
-        } catch (IllegalArgumentException e) {
-            String message = String.format("Unable to extract object path from '%s'.", path.toString());
-            throw new FilterException(message);
-        }
+        String[] idList = id.split("/");
+        String objectClassName = idList[0];
+        String objectNumber = idList[1];
+        this.reference = new ObjectReference(objectClassName, (DocumentReference) parentReference);
+        this.number = Integer.parseInt(objectNumber);
+        this.setFilters(filter, proxyFilter);
+    }
 
-        // Close previous object before starting a new one
-        if (!objectPath.equals(this.previousObjectPath)) {
-            this.finish();
+    @Override
+    public void route(Path path, InputStream inputStream) throws FilterException
+    {
+        String fileName = path.toString();
+        if (fileName.equals(ObjectsReader.OBJECT_FILENAME)) {
+            this.parseObject(inputStream);
+            this.start();
+            return;
+        } else {
+            this.start();
         }
-        // Parse files relative to page or reroute them
-        if (path.endsWith(ObjectReader.OBJECT_FILENAME)) {
-            this.init(objectPath, inputStream, parentReference);
-        } else if (objectPath.relativize(path).toString().startsWith("metadata")) {
+        if (path.toString().startsWith("metadata")) {
             this.routeMetadata(path, inputStream);
         } else {
             String message = String.format("ObjectReader don't know how to route '%s'.", path.toString());
             throw new FilterException(message);
         }
-        this.previousObjectPath = objectPath;
     }
 
     @Override
-    public void finish() throws FilterException
+    public void close() throws FilterException
     {
-        if (this.reference != null) {
-            if (!this.started) {
-                this.start();
-            }
-            routeProperties();
-            this.proxyFilter.endWikiObject(this.getName(), this.parameters);
+        if (this.started) {
+            this.routeProperties();
+            this.end();
         }
-        this.reset();
     }
 }

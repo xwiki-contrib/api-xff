@@ -1,3 +1,9 @@
 org.xwiki.filter.xff.internal.input.XFFReader
 org.xwiki.filter.xff.internal.input.XFFInputFilterStream
 org.xwiki.filter.xff.internal.input.XFFInputFilterStreamFactory
+org.xwiki.filter.xff.internal.input.WikisReader
+org.xwiki.filter.xff.internal.input.SpacesReader
+org.xwiki.filter.xff.internal.input.PagesReader
+org.xwiki.filter.xff.internal.input.AttachmentsReader
+org.xwiki.filter.xff.internal.input.ClassesReader
+org.xwiki.filter.xff.internal.input.ObjectsReader

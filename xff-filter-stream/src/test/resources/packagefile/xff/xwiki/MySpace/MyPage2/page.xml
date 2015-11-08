@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
-	<title>Hello MyPage2!</title>
+	<title>Title of MySpace.MyPage2</title>
 	<parent>MySpace.WebHome</parent>
-	<content>This is a new page</content>
+	<content>This is content of MySpace.MyPage2</content>
 </page>

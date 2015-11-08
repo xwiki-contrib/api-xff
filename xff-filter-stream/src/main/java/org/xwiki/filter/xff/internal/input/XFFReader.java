@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 import javax.inject.Inject;
 
@@ -37,10 +36,13 @@ import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.input.FileInputSource;
 import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
+import org.xwiki.filter.xff.input.Reader;
 import org.xwiki.filter.xff.input.XFFInputProperties;
 import org.xwiki.filter.xff.internal.Index;
 import org.xwiki.filter.xff.internal.UncloseableZipInputStream;
@@ -54,6 +56,12 @@ import org.xwiki.filter.xff.internal.UncloseableZipInputStream;
 public class XFFReader
 {
     /**
+     * The component manager. We need it because we have to access components dynamically.
+     */
+    @Inject
+    private ComponentManager componentManager;
+
+    /**
      * Logger to report errors, warnings, etc.
      */
     @Inject
@@ -63,11 +71,6 @@ public class XFFReader
      * Properties of the reader.
      */
     private XFFInputProperties properties;
-
-    /**
-     * The reader to whom route files.
-     */
-    private WikiReader wikiReader;
 
     /**
      * Set the properties before launching the reader.
@@ -110,17 +113,6 @@ public class XFFReader
         return test == 0x504b0304 || test == 0x504b0506 || test == 0x504b0708;
     }
 
-    private boolean isZip(InputStream inputStream)
-    {
-        boolean isZipped = false;
-        try {
-            isZipped = new ZipInputStream(inputStream).getNextEntry() != null;
-        } catch (IOException e) {
-            return false;
-        }
-        return isZipped;
-    }
-
     /**
      * Entry point for reading a XFF file.
      * 
@@ -130,15 +122,14 @@ public class XFFReader
     public void read(Object filter, XFFInputFilter proxyFilter)
     {
         InputSource source = this.properties.getSource();
-        this.wikiReader = new WikiReader(filter, proxyFilter);
         if (source instanceof FileInputSource) {
             try {
                 File inputFile = ((FileInputSource) source).getFile();
                 if (isZip(inputFile)) {
-                    parseXFFFile(inputFile);
+                    parseXFFFile(inputFile, filter, proxyFilter);
                 } else if (inputFile.isDirectory()) {
                     Path path = Paths.get(inputFile.getPath());
-                    parseXFFDir(path);
+                    parseXFFDir(path, filter, proxyFilter);
                 } else {
                     this.logger.error("Don't know how to parse this kind of XFF format");
                 }
@@ -150,7 +141,7 @@ public class XFFReader
         } else if (source instanceof InputStreamInputSource) {
             try {
                 InputStream inputStream = ((InputStreamInputSource) source).getInputStream();
-                parseXFFInputStream(inputStream);
+                parseXFFInputStream(inputStream, filter, proxyFilter);
             } catch (FilterException e) {
                 this.logger.error("Fail to filter from input stream input source", e);
             } catch (IOException e) {
@@ -161,60 +152,112 @@ public class XFFReader
         }
     }
 
-    private void parseXFFFile(File file) throws IOException, FilterException
+    private Reader updateReader(Reader reader, String hint, String id, String previousId, Object filter,
+        XFFInputFilter proxyFilter) throws FilterException
+    {
+        Reader newReader = reader;
+        if (!id.equals(previousId)) {
+            if (reader != null) {
+                reader.close();
+            }
+            try {
+                newReader = this.componentManager.getInstance(Reader.class, hint);
+                newReader.open(id, null, filter, proxyFilter);
+            } catch (ComponentLookupException e) {
+                String message =
+                    String.format("Incorrect '%s' file, cannot get the corresponding Reader.", Index.INDEX_FILENAME);
+                throw new FilterException(message, e);
+            }
+        }
+        return newReader;
+    }
+
+    private void parseXFFFile(File file, Object filter, XFFInputFilter proxyFilter) throws IOException, FilterException
     {
         ZipFile zf = new ZipFile(file, ZipFile.OPEN_READ);
         ZipEntry indexEntry = zf.getEntry(Index.INDEX_FILENAME);
         if (indexEntry != null) {
             InputStream indexStream = zf.getInputStream(indexEntry);
             Index index = new Index(indexStream);
+            Reader reader = null;
+            String previousId = null;
 
             while (index.hasMoreElements()) {
                 Path path = index.nextElement();
-                ZipEntry entry = zf.getEntry(path.toString());
+                String hint = path.subpath(0, 1).toString();
+                String id = path.subpath(1, 2).toString();
+                Path subPath = path.subpath(2, path.getNameCount());
+                reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
+                String filePath = index.extractFilePath(path);
+                ZipEntry entry = zf.getEntry(filePath);
                 if (!entry.isDirectory()) {
                     InputStream inputStream = zf.getInputStream(entry);
-                    this.wikiReader.route(path, inputStream, null);
+                    reader.route(subPath, inputStream);
                 }
+                previousId = id;
             }
 
-            wikiReader.finish();
+            if (reader != null) {
+                reader.close();
+            }
             zf.close();
         }
     }
 
-    private void parseXFFInputStream(InputStream inputStream) throws FilterException, IOException
+    private void parseXFFInputStream(InputStream inputStream, Object filter, XFFInputFilter proxyFilter)
+        throws FilterException, IOException
     {
         UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
+        ZipEntry entry = null;
+        entry = zis.getNextEntry();
+        if (entry != null) {
+            Index index = new Index(zis);
+            Reader reader = null;
+            String previousId = null;
 
-        ZipEntry entry = zis.getNextEntry();
-        while (entry != null) {
-            if (!entry.isDirectory()) {
-                Path path = Paths.get(entry.getName());
-                this.wikiReader.route(path, zis, null);
+            while ((entry = zis.getNextEntry()) != null) {
+                Path path = index.nextElement();
+                String hint = path.subpath(0, 1).toString();
+                String id = path.subpath(1, 2).toString();
+                Path subPath = path.subpath(2, path.getNameCount());
+                reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
+                if (!entry.isDirectory()) {
+                    reader.route(subPath, zis);
+                }
+                zis.closeEntry();
+                previousId = id;
             }
-            zis.closeEntry();
-            entry = zis.getNextEntry();
+            reader.close();
         }
-
-        wikiReader.finish();
         zis.close(true);
     }
 
-    private void parseXFFDir(Path rootPath) throws IOException, FilterException
+    private void parseXFFDir(Path rootPath, Object filter, XFFInputFilter proxyFilter) throws IOException,
+        FilterException
     {
         Path indexPath = Paths.get(rootPath.toString(), Index.INDEX_FILENAME);
         Index index = new Index(indexPath);
+        Reader reader = null;
+        String previousId = null;
+
         while (index.hasMoreElements()) {
             Path path = index.nextElement();
-            Path filePath = rootPath.resolve(path);
+            String hint = path.subpath(0, 1).toString();
+            String id = path.subpath(1, 2).toString();
+            Path subPath = path.subpath(2, path.getNameCount());
+            reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
+            String relativeFilePath = index.extractFilePath(path);
+            Path filePath = rootPath.resolve(relativeFilePath);
             File file = new File(filePath.toUri());
             if (!file.isDirectory()) {
                 InputStream inputStream = new FileInputStream(file);
-                this.wikiReader.route(path, inputStream, null);
+                reader.route(subPath, inputStream);
                 inputStream.close();
             }
+            previousId = id;
         }
-        wikiReader.finish();
+        if (reader != null) {
+            reader.close();
+        }
     }
 }

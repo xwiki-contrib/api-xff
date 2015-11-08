@@ -20,17 +20,17 @@
 package org.xwiki.filter.xff.input;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xff.internal.input.XFFInputFilter;
-import org.xwiki.model.reference.EntityReference;
 
 /**
  * Abstract class that each element from XFF (wiki, space, page, object, class, etc.) should implement.
@@ -38,12 +38,13 @@ import org.xwiki.model.reference.EntityReference;
  * @version $Id$
  * @since 7.1
  */
-public abstract class AbstractReader
+public abstract class AbstractReader implements Reader
 {
     /**
      * Logger to report errors, warnings, etc.
      */
-    protected Logger logger = LoggerFactory.getLogger(AbstractReader.class);
+    @Inject
+    protected Logger logger;
 
     /**
      * Filter.
@@ -56,16 +57,25 @@ public abstract class AbstractReader
     protected XFFInputFilter proxyFilter;
 
     /**
-     * Constructor that stores filters (there is no empty constructor for readers).
-     * 
-     * @param filter is the input filter
-     * @param proxyFilter is the output filter
+     * Child reader.
      */
-    public AbstractReader(Object filter, XFFInputFilter proxyFilter)
-    {
-        this.filter = filter;
-        this.proxyFilter = proxyFilter;
-    }
+    protected Reader reader;
+
+    /**
+     * Retain the status of the reader.
+     */
+    protected boolean started;
+
+    /**
+     * Retain the id of the last reader.
+     */
+    protected String lastReaderId;
+
+    /**
+     * The component manager. We need it because we have to access components dynamically.
+     */
+    @Inject
+    private ComponentManager componentManager;
 
     /**
      * Convert XML input stream into a JAX-B object.
@@ -88,22 +98,29 @@ public abstract class AbstractReader
     }
 
     /**
-     * Push a new file to the reader. When a XFF is read, it's read file by file. The master filter (XFFFilter) will
-     * route these information to the child filter (wiki, then space, then page, etc.) until the right filter is in
-     * charge (e.g. a path 'xwiki/Space/Page/index.xml' will be treated by the PageFilter).
+     * Will load the correct reader considering the next path. For example, if the next path is
+     * <tt>/wikis/xwiki/spaces/Space</tt> , then it will load the {@link WikisReader} because of the hint <tt>wikis</tt>
+     * .
      * 
-     * @param path is the relative path of the file being read
-     * @param inputStream is the stream of the read file
-     * @param parentReference is a reference of the element that call this method
-     * @throws FilterException whenever there is problem to generate an event
+     * @param path for which you want to find a {@link Reader}
+     * @return an instance of the corresponding {@link Reader}
+     * @throws FilterException
      */
-    public abstract void route(Path path, InputStream inputStream, EntityReference parentReference)
-        throws FilterException;
+    protected Reader getReader(String hint) throws FilterException
+    {
+        try {
+            this.reader = (Reader) this.componentManager.getInstance(Reader.class, hint);
+            return this.reader;
+        } catch (ComponentLookupException e) {
+            String message =
+                String.format("Unable to find a component org.xwiki.filter.xff.input.Reader with hint '%s'.", hint);
+            throw new FilterException(message, e);
+        }
+    }
 
-    /**
-     * When all elements has been pushed, this method should be called to close properly the filter.
-     * 
-     * @throws FilterException whenever there is problem to generate an event
-     */
-    public abstract void finish() throws FilterException;
+    protected void setFilters(Object filter, XFFInputFilter proxyFilter)
+    {
+        this.filter = filter;
+        this.proxyFilter = proxyFilter;
+    }
 }
