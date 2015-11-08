@@ -22,82 +22,34 @@ package org.xwiki.filter.xff.test;
 import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.xwiki.filter.FilterException;
-import org.xwiki.filter.xff.internal.input.ClassReader;
-import org.xwiki.filter.xff.internal.input.ObjectReader;
-import org.xwiki.filter.xff.internal.input.PageReader;
-import org.xwiki.filter.xff.internal.input.SpaceReader;
-import org.xwiki.filter.xff.internal.input.WikiReader;
-import org.xwiki.filter.xff.test.internal.TestReader;
+import org.xwiki.filter.xff.input.Reader;
+import org.xwiki.filter.xff.test.internal.input.TestReader;
 import org.xwiki.rest.model.jaxb.Wiki;
+import org.xwiki.test.mockito.MockitoComponentMockingRule;
 
 public class XFFUnitTest
 {
+    @Rule
+    public final MockitoComponentMockingRule<TestReader> mocker = new MockitoComponentMockingRule<TestReader>(
+        TestReader.class);
+
+    private TestReader testReader = null;
+
+    @Before
+    public void setUp() throws Exception
+    {
+        this.testReader = mocker.getInstance(Reader.class, "test");
+    }
+
     @Test
     public void malformedXML()
     {
-        TestReader testReader = new TestReader(null, null);
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("wiki.xml");
-        assertNull(testReader.publicUnmarshal(inputStream, Wiki.class));
-    }
-
-    @Test(expected = FilterException.class)
-    public void wrongPathWiki() throws FilterException
-    {
-        WikiReader wikiReader = new WikiReader(null, null);
-        Path path = Paths.get("/");
-        wikiReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void wrongPathSpace() throws FilterException
-    {
-        SpaceReader spaceReader = new SpaceReader(null, null);
-        Path path = Paths.get("/");
-        spaceReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void wrongPathPage() throws FilterException
-    {
-        PageReader pageReader = new PageReader(null, null);
-        Path path = Paths.get("/");
-        pageReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void wrongPathClass() throws FilterException
-    {
-        ClassReader classReader = new ClassReader(null, null);
-        Path path = Paths.get("/");
-        classReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void notAllowedPathClass() throws FilterException
-    {
-        ClassReader classReader = new ClassReader(null, null);
-        Path path = Paths.get("xwiki/Space/Page/class/notallowed");
-        classReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void wrongPathObject() throws FilterException
-    {
-        ObjectReader objectReader = new ObjectReader(null, null);
-        Path path = Paths.get("/");
-        objectReader.route(path, null, null);
-    }
-    
-    @Test(expected = org.xwiki.filter.FilterException.class)
-    public void notAllowedPathObject() throws FilterException
-    {
-        ObjectReader objectReader = new ObjectReader(null, null);
-        Path path = Paths.get("xwiki/Space/Page/objects/Space.Page/0/notallowed");
-        objectReader.route(path, null, null);
+        String fileName = "wiki.xml";
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName);
+        assertNull(this.testReader.publicUnmarshal(inputStream, Wiki.class));
     }
 }

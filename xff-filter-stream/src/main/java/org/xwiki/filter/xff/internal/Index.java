@@ -48,6 +48,11 @@ public class Index
      */
     private BufferedReader buffer;
 
+    /**
+     * First line of the index file.
+     */
+    private Path firstElement;
+
     public Index(Path path) throws FileNotFoundException
     {
         File file = new File(path.toUri());
@@ -60,6 +65,16 @@ public class Index
     {
         Reader reader = new InputStreamReader(inputStream);
         this.buffer = new BufferedReader(reader);
+        String firstElement = null;
+        try {
+            this.buffer.mark(1024);
+            firstElement = this.buffer.readLine();
+            this.buffer.reset();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        this.firstElement = Paths.get(firstElement);
     }
 
     public boolean hasMoreElements()
@@ -67,7 +82,7 @@ public class Index
         boolean hasMoreElement = true;
 
         try {
-            this.buffer.mark(1000);
+            this.buffer.mark(1024);
             if (this.buffer.readLine() == null) {
                 hasMoreElement = false;
             }
@@ -91,5 +106,10 @@ public class Index
             logger.error(message, e);
             return null;
         }
+    }
+
+    public Path getFirstElement()
+    {
+        return this.firstElement;
     }
 }

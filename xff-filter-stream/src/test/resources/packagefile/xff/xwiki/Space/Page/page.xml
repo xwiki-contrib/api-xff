@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <page xmlns="http://www.xwiki.org">
-	<title>Hello world!</title>
+	<title>Title of Space.Page</title>
 	<parent>Space.WebHome</parent>
-	<content>This is a new page</content>
+	<content>This is content of Space.Page.
+This is multiline content.</content>
 </page>

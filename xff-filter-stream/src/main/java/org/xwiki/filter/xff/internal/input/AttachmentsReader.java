@@ -23,7 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import javax.inject.Named;
+
 import org.apache.commons.compress.utils.IOUtils;
+import org.xwiki.component.annotation.Component;
+import org.xwiki.component.annotation.InstantiationStrategy;
+import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xff.input.AbstractReader;
@@ -37,52 +42,33 @@ import org.xwiki.model.reference.EntityReference;
  * @version $Id$
  * @since 7.1
  */
-public class AttachmentReader extends AbstractReader
+@Component
+@Named("attachments")
+@InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
+public class AttachmentsReader extends AbstractReader
 {
     /**
      * Reference to the current attachment.
      */
-    private AttachmentReference reference;
+    private AttachmentReference reference = null;
 
     /**
      * Parameters to send to the current class.
      */
     private FilterEventParameters parameters = FilterEventParameters.EMPTY;
 
-    /**
-     * Constructor that only call the abstract constructor.
-     * 
-     * @param filter is the input filter
-     * @param proxyFilter is the output filter
-     */
-    public AttachmentReader(Object filter, XFFInputFilter proxyFilter)
-    {
-        super(filter, proxyFilter);
-    }
-
-    private void reset()
-    {
-        this.reference = null;
-        this.parameters = FilterEventParameters.EMPTY;
-    }
-
-    private void setReference(String attachmentName, EntityReference parentReference)
-    {
-        this.reference = new AttachmentReference(attachmentName, (DocumentReference) parentReference);
-    }
-
-    private void init(Path path, EntityReference parentReference) throws FilterException
-    {
-        this.reset();
-        String attachmentName = path.getFileName().toString();
-        this.setReference(attachmentName, parentReference);
-    }
-
     @Override
-    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    public void open(String id, EntityReference parentReference, Object filter, XFFInputFilter proxyFilter)
+        throws FilterException
+    {
+        this.reference = new AttachmentReference(id, (DocumentReference) parentReference);
+        this.setFilters(filter, proxyFilter);
+    }
+    
+    @Override
+    public void route(Path path, InputStream inputStream) throws FilterException
     {
         byte[] bytes;
-        this.init(path, parentReference);
         try {
             bytes = IOUtils.toByteArray(inputStream);
             // FIXME: Why do we need length if we use an InputStream?
@@ -92,12 +78,10 @@ public class AttachmentReader extends AbstractReader
             String message = String.format("Error in writing '%s'.", this.reference.getName());
             throw new FilterException(message, e);
         }
-        this.finish();
     }
 
     @Override
-    public void finish() throws FilterException
+    public void close() throws FilterException
     {
-        this.reset();
     }
 }

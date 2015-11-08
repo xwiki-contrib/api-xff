@@ -10,11 +10,11 @@
             <parameters>
               <entry>
                 <string>content</string>
-                <string>This is a new page</string>
+                <string>This is content of MySpace.MyPage1</string>
               </entry>
               <entry>
                 <string>title</string>
-                <string>Hello MyPage1!</string>
+                <string>Title of MySpace.MyPage1</string>
               </entry>
               <entry>
                 <string>parent_reference</string>
@@ -32,11 +32,11 @@
             <parameters>
               <entry>
                 <string>content</string>
-                <string>This is a new page</string>
+                <string>This is content of MySpace.MyPage2</string>
               </entry>
               <entry>
                 <string>title</string>
-                <string>Hello MyPage2!</string>
+                <string>Title of MySpace.MyPage2</string>
               </entry>
               <entry>
                 <string>parent_reference</string>
@@ -56,12 +56,12 @@
             <parameters>
               <entry>
                 <string>content</string>
-                <string>This is a more powerful content.
-</string>
+                <string>This is content of Space.Page.
+This is multiline content.</string>
               </entry>
               <entry>
                 <string>title</string>
-                <string>Hello world!</string>
+                <string>Title of Space.Page</string>
               </entry>
               <entry>
                 <string>parent_reference</string>
@@ -122,6 +122,30 @@
         </wikiDocumentRevision>
       </wikiDocumentLocale>
     </wikiDocument>
+    <wikiSpace name="SubSpace">
+      <wikiDocument name="SubPage">
+        <wikiDocumentLocale>
+          <wikiDocumentRevision revision="1.1">
+            <p>
+              <parameters>
+                <entry>
+                  <string>content</string>
+                  <string>This is content of Space.SubSpace.SubPage</string>
+                </entry>
+                <entry>
+                  <string>title</string>
+                  <string>Title of Space.SubSpace.SubPage</string>
+                </entry>
+                <entry>
+                  <string>parent_reference</string>
+                  <string>Space.SubSpace.WebHome</string>
+                </entry>
+              </parameters>
+            </p>
+          </wikiDocumentRevision>
+        </wikiDocumentLocale>
+      </wikiDocument>
+    </wikiSpace>
   </wikiSpace>
 </wiki>
 .#------------------------------------------------------------------------------

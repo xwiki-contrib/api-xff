@@ -23,7 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 
+import javax.inject.Named;
+
 import org.apache.commons.io.IOUtils;
+import org.xwiki.component.annotation.Component;
+import org.xwiki.component.annotation.InstantiationStrategy;
+import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
 import org.xwiki.filter.FilterEventParameters;
 import org.xwiki.filter.FilterException;
 import org.xwiki.filter.xff.input.AbstractReader;
@@ -39,7 +44,10 @@ import org.xwiki.rest.model.jaxb.Property;
  * @version $Id$
  * @since 7.1
  */
-public class ClassReader extends AbstractReader
+@Component
+@Named("classes")
+@InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
+public class ClassesReader extends AbstractReader
 {
     /**
      * Name of the file to describe a class.
@@ -49,7 +57,7 @@ public class ClassReader extends AbstractReader
     /**
      * Reference to the current document.
      */
-    private DocumentReference reference;
+    private DocumentReference reference = null;
 
     /**
      * Contain the model of a page (see xwiki-platform-rest-model).
@@ -57,42 +65,15 @@ public class ClassReader extends AbstractReader
     private Class xClass = new Class();
 
     /**
-     * Retain information about if a class has been opened.
-     */
-    private boolean started;
-
-    /**
-     * Retain the last class in order to close and reinit if the current class is a new one.
-     */
-    private Path previousClassPath;
-
-    /**
      * Parameters to send to the current class.
      */
     private FilterEventParameters parameters = FilterEventParameters.EMPTY;
 
-    /**
-     * Constructor that only call the abstract constructor.
-     * 
-     * @param filter is the input filter
-     * @param proxyFilter is the output filter
-     */
-    public ClassReader(Object filter, XFFInputFilter proxyFilter)
+    private void parseClass(InputStream inputStream) throws FilterException
     {
-        super(filter, proxyFilter);
-    }
-
-    private void reset()
-    {
-        this.reference = null;
-        this.xClass = new Class();
-        this.parameters = FilterEventParameters.EMPTY;
-        this.started = false;
-    }
-
-    private void setReference(EntityReference parentReference)
-    {
-        this.reference = (DocumentReference) parentReference;
+        if (inputStream != null) {
+            this.xClass = (Class) this.unmarshal(inputStream, Class.class);
+        }
     }
 
     private void routeProperties() throws FilterException
@@ -108,19 +89,18 @@ public class ClassReader extends AbstractReader
         }
     }
 
-    private void init(InputStream inputStream, EntityReference parentReference) throws FilterException
-    {
-        this.reset();
-        if (inputStream != null) {
-            this.xClass = (Class) this.unmarshal(inputStream, Class.class);
-        }
-        this.setReference(parentReference);
-    }
-
     private void start() throws FilterException
     {
-        this.proxyFilter.beginWikiClass(this.parameters);
-        this.started = true;
+        if (!this.started) {
+            this.proxyFilter.beginWikiClass(this.parameters);
+            this.started = true;
+        }
+    }
+    
+    private void end() throws FilterException {
+        if(this.started) {
+            this.proxyFilter.endWikiClass(this.parameters);
+        }
     }
 
     private void routeMetadata(Path path, InputStream inputStream) throws FilterException
@@ -146,42 +126,38 @@ public class ClassReader extends AbstractReader
     }
 
     @Override
-    public void route(Path path, InputStream inputStream, EntityReference parentReference) throws FilterException
+    public void open(String id, EntityReference parentReference, Object filter, XFFInputFilter proxyFilter)
+        throws FilterException
     {
-        Path classPath;
-        try {
-            classPath = path.subpath(0, 4);
-        } catch (IllegalArgumentException e) {
-            String message = String.format("Unable to extract class path from '%s'.", path.toString());
-            throw new FilterException(message);
-        }
-
-        // Close previous class before starting a new one
-        if (!classPath.equals(this.previousClassPath)) {
-            this.finish();
-        }
-        // Parse files relative to page or reroute them
-        if (path.endsWith(ClassReader.CLASS_FILENAME)) {
-            this.init(inputStream, parentReference);
-        } else if (classPath.relativize(path).toString().startsWith("metadata")) {
-            this.routeMetadata(path, inputStream);
-        } else {
-            String message = String.format("ClassReader don't know how to route '%s'.", path.toString());
-            throw new FilterException(message);
-        }
-        this.previousClassPath = classPath;
+        this.reference = new DocumentReference((DocumentReference) parentReference);
+        this.setFilters(filter, proxyFilter);
     }
 
     @Override
-    public void finish() throws FilterException
+    public void route(Path path, InputStream inputStream) throws FilterException
     {
-        if (this.reference != null) {
-            if (!this.started) {
-                this.start();
-            }
-            routeProperties();
-            this.proxyFilter.endWikiClass(this.parameters);
+        String fileName = path.toString();
+        if (fileName.equals(ClassesReader.CLASS_FILENAME)) {
+            this.parseClass(inputStream);
+            this.start();
+            return;
+        } else {
+            this.start();
         }
-        this.reset();
+        if (path.toString().startsWith("metadata")) {
+            this.routeMetadata(path, inputStream);
+        } else {
+            String message = String.format("ClassesReader don't know how to route '%s'.", path.toString());
+            throw new FilterException(message);
+        }
+    }
+
+    @Override
+    public void close() throws FilterException
+    {
+        if (this.started) {
+            this.routeProperties();
+            this.end();
+        }
     }
 }
