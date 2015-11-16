@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object xmlns="http://www.xwiki.org">
+  <property name="answer">
+    <value>42</value>
+  </property>
+</object>
