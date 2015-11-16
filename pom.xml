@@ -32,8 +32,13 @@
   <name>XFF - Parent POM</name>
   <description>APIs for the Xwiki Filesystem Format (XFF) format</description>
   <properties>
-    <platform.version>7.1.1</platform.version>
-    <xwiki.jacoco.instructionRatio>0.75</xwiki.jacoco.instructionRatio>
+    <platform.version>${commons.version}</platform.version>
+    <!-- TODO: There's a regression with version 0.7.5.201505241946, see
+      - http://stackoverflow.com/questions/30459260/jacoco-sonarqube-incompatible-version-1007
+      - http://jira.codehaus.org/browse/SONARJAVA-1091
+      Remove once version 3.4 of the SonarQube JaCoCo plugin is released and installed on sonar.xwiki.org
+    -->
+    <jacoco.version>0.7.4.201502262128</jacoco.version>
   </properties>
 
   <scm>
@@ -47,7 +52,6 @@
     <system>jira</system>
     <url>http://jira.xwiki.org/browse/XFF</url>
   </issueManagement>
-
 
   <distributionManagement>
     <repository>
@@ -85,12 +89,18 @@
   <modules>
     <module>xff-core</module>
     <module>xff-filter-stream</module>
+    <module>xff-maven</module>
     <module>xff-rest-api</module>
   </modules>
 
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco.version}</version>
+        </plugin>
         <plugin>
           <groupId>org.eluder.coveralls</groupId>
           <artifactId>coveralls-maven-plugin</artifactId>
