@@ -25,7 +25,6 @@
     <artifactId>xff</artifactId>
     <version>0.3.2-SNAPSHOT</version>
   </parent>
-  <groupId>org.xwiki.contrib</groupId>
   <artifactId>xff-filter-stream</artifactId>
   <packaging>jar</packaging>
   <name>XFF - Filter Stream</name>
@@ -44,6 +43,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>xff-core</artifactId>
+	  <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>

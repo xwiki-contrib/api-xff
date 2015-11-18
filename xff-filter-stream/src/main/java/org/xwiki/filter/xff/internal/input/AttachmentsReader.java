@@ -43,10 +43,10 @@ import org.xwiki.model.reference.EntityReference;
  * @since 7.1
  */
 @Component
-@Named("attachments")
+@Named(org.xwiki.xff.core.model.Attachment.ATTACHMENTS_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class AttachmentsReader extends AbstractReader
-{
+{    
     /**
      * Reference to the current attachment.
      */

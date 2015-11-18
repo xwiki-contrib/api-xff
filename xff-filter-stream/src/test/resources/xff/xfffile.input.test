@@ -1,6 +1,7 @@
 .#------------------------------------------------------------------------------
 .expect|filter+xml
 .#------------------------------------------------------------------------------
+<wiki name="templatewiki"></wiki>
 <wiki name="xwiki">
   <wikiSpace name="MySpace">
     <wikiDocument name="MyPage1">
@@ -148,7 +149,6 @@ This is multiline content.</string>
     </wikiSpace>
   </wikiSpace>
 </wiki>
-<wiki name="templatewiki"></wiki>
 .#------------------------------------------------------------------------------
 .input|xwiki+xff/1.0
 .configuration.source=${{{extension.repository}}}/test-1.0.xff

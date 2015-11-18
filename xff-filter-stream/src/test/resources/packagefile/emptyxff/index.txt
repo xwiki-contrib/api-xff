@@ -1,1 +1,0 @@
-wrongprefix/xwiki/wiki.xml

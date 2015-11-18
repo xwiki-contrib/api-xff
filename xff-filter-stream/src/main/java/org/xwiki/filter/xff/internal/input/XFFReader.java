@@ -21,14 +21,12 @@ package org.xwiki.filter.xff.internal.input;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.inject.Inject;
 
@@ -44,8 +42,8 @@ import org.xwiki.filter.input.InputSource;
 import org.xwiki.filter.input.InputStreamInputSource;
 import org.xwiki.filter.xff.input.Reader;
 import org.xwiki.filter.xff.input.XFFInputProperties;
-import org.xwiki.filter.xff.internal.Index;
 import org.xwiki.filter.xff.internal.UncloseableZipInputStream;
+import org.xwiki.xff.core.XFFExplorer;
 
 /**
  * @version $Id$
@@ -86,23 +84,21 @@ public class XFFReader
      * Test if a file is a zip. From http://www.java2s.com/Code/Java/File-Input-Output/
      * DeterminewhetherafileisaZIPFile.htm
      * 
-     * @param file is the file to be tested
+     * @param path is the file to be tested
      * @return true if the file is a zip, return false in other cases
      */
-    private boolean isZip(File file)
+    private boolean isZip(Path path)
     {
-        if (file.isDirectory()) {
-            return false;
-        }
-        if (!file.canRead()) {
-            return false;
-        }
-        if (file.length() < 4) {
+        try {
+            if (Files.isDirectory(path) || !Files.isReadable(path) || Files.size(path) < 4) {
+                return false;
+            }
+        } catch (IOException e1) {
             return false;
         }
         int test = 0;
         try {
-            DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+            DataInputStream in = new DataInputStream(new BufferedInputStream(Files.newInputStream(path)));
             test = in.readInt();
             in.close();
         } catch (IOException e) {
@@ -124,11 +120,10 @@ public class XFFReader
         InputSource source = this.properties.getSource();
         if (source instanceof FileInputSource) {
             try {
-                File inputFile = ((FileInputSource) source).getFile();
-                if (isZip(inputFile)) {
-                    parseXFFFile(inputFile, filter, proxyFilter);
-                } else if (inputFile.isDirectory()) {
-                    Path path = Paths.get(inputFile.getPath());
+                Path path = ((FileInputSource) source).getFile().toPath();
+                if (isZip(path)) {
+                    parseXFFFile(path, filter, proxyFilter);
+                } else if (Files.isDirectory(path)) {
                     parseXFFDir(path, filter, proxyFilter);
                 } else {
                     this.logger.error("Don't know how to parse this kind of XFF format");
@@ -164,43 +159,18 @@ public class XFFReader
                 newReader = this.componentManager.getInstance(Reader.class, hint);
                 newReader.open(id, null, filter, proxyFilter);
             } catch (ComponentLookupException e) {
-                String message =
-                    String.format("Incorrect '%s' file, cannot get the corresponding Reader.", Index.INDEX_FILENAME);
+                String message = String.format("Incorrect hint '%s', cannot get the corresponding Reader.", hint);
                 throw new FilterException(message, e);
             }
         }
         return newReader;
     }
 
-    private void parseXFFFile(File file, Object filter, XFFInputFilter proxyFilter) throws IOException, FilterException
+    private void parseXFFFile(Path path, Object filter, XFFInputFilter proxyFilter) throws IOException, FilterException
     {
-        ZipFile zf = new ZipFile(file, ZipFile.OPEN_READ);
-        ZipEntry indexEntry = zf.getEntry(Index.INDEX_FILENAME);
-        if (indexEntry != null) {
-            InputStream indexStream = zf.getInputStream(indexEntry);
-            Index index = new Index(indexStream);
-            Reader reader = null;
-            String previousId = null;
-
-            while (index.hasMoreElements()) {
-                Path path = index.nextElement();
-                String hint = path.subpath(0, 1).toString();
-                String id = path.subpath(1, 2).toString();
-                Path subPath = path.subpath(2, path.getNameCount());
-                reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
-                String filePath = index.extractFilePath(path);
-                ZipEntry entry = zf.getEntry(filePath);
-                if (!entry.isDirectory()) {
-                    InputStream inputStream = zf.getInputStream(entry);
-                    reader.route(subPath, inputStream);
-                }
-                previousId = id;
-            }
-
-            if (reader != null) {
-                reader.close();
-            }
-            zf.close();
+        if (isZip(path)) {
+            InputStream inputStream = Files.newInputStream(path);
+            parseXFFInputStream(inputStream, filter, proxyFilter);
         }
     }
 
@@ -209,24 +179,22 @@ public class XFFReader
     {
         UncloseableZipInputStream zis = new UncloseableZipInputStream(inputStream);
         ZipEntry entry = null;
-        entry = zis.getNextEntry();
-        if (entry != null) {
-            Index index = new Index(zis);
-            Reader reader = null;
-            String previousId = null;
+        Reader reader = null;
+        String previousId = null;
 
-            while ((entry = zis.getNextEntry()) != null) {
-                Path path = index.nextElement();
+        while ((entry = zis.getNextEntry()) != null) {
+            if (!entry.isDirectory()) {
+                Path path = Paths.get(entry.getName());
                 String hint = path.subpath(0, 1).toString();
                 String id = path.subpath(1, 2).toString();
                 Path subPath = path.subpath(2, path.getNameCount());
                 reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
-                if (!entry.isDirectory()) {
-                    reader.route(subPath, zis);
-                }
-                zis.closeEntry();
+                reader.route(subPath, zis);
                 previousId = id;
             }
+            zis.closeEntry();
+        }
+        if (reader != null) {
             reader.close();
         }
         zis.close(true);
@@ -235,22 +203,19 @@ public class XFFReader
     private void parseXFFDir(Path rootPath, Object filter, XFFInputFilter proxyFilter) throws IOException,
         FilterException
     {
-        Path indexPath = Paths.get(rootPath.toString(), Index.INDEX_FILENAME);
-        Index index = new Index(indexPath);
+        XFFExplorer packageExplorer = new XFFExplorer(rootPath);
         Reader reader = null;
         String previousId = null;
 
-        while (index.hasMoreElements()) {
-            Path path = index.nextElement();
+        while (packageExplorer.hasNext()) {
+            Path path = packageExplorer.next();
             String hint = path.subpath(0, 1).toString();
             String id = path.subpath(1, 2).toString();
             Path subPath = path.subpath(2, path.getNameCount());
             reader = updateReader(reader, hint, id, previousId, filter, proxyFilter);
-            String relativeFilePath = index.extractFilePath(path);
-            Path filePath = rootPath.resolve(relativeFilePath);
-            File file = new File(filePath.toUri());
-            if (!file.isDirectory()) {
-                InputStream inputStream = new FileInputStream(file);
+            Path filePath = rootPath.resolve(path);
+            if (!Files.isDirectory(filePath)) {
+                InputStream inputStream = Files.newInputStream(filePath);
                 reader.route(subPath, inputStream);
                 inputStream.close();
             }

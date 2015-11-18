@@ -46,15 +46,10 @@ import org.xwiki.rest.model.jaxb.Page;
  * @since 7.1
  */
 @Component
-@Named("pages")
+@Named(org.xwiki.xff.core.model.Page.PAGE_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class PagesReader extends AbstractReader
 {
-    /**
-     * Name of the file to describe a page.
-     */
-    private static final String PAGE_FILENAME = "page.xml";
-
     /**
      * The used locale for Document Locale.
      */
@@ -154,7 +149,7 @@ public class PagesReader extends AbstractReader
         }
     }
 
-    private void routeMetadata(Path path, InputStream inputStream) throws FilterException
+    private void routeProperty(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
         // TODO: Make it more generic
@@ -180,7 +175,7 @@ public class PagesReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         String fileName = path.toString();
-        if (fileName.equals(PagesReader.PAGE_FILENAME)) {
+        if (fileName.equals(org.xwiki.xff.core.model.Page.PAGE_FILENAME)) {
             this.parsePage(inputStream);
             this.start();
             return;
@@ -188,8 +183,8 @@ public class PagesReader extends AbstractReader
             this.start();
         }
         String hint = path.subpath(0, 1).toString();
-        if ("metadata".equals(hint)) {
-            this.routeMetadata(path, inputStream);
+        if (hint.equals(org.xwiki.xff.core.model.Property.PROPERTY_HINT)) {
+            this.routeProperty(path, inputStream);
             return;
         }
         String childId = null;

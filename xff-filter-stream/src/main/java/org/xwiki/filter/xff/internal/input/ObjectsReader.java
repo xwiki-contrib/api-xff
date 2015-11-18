@@ -44,15 +44,10 @@ import org.xwiki.rest.model.jaxb.Property;
  * @since 7.1
  */
 @Component
-@Named("objects")
+@Named(org.xwiki.xff.core.model.Object.OBJECT_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class ObjectsReader extends AbstractReader
 {
-    /**
-     * Name of the file to describe an object.
-     */
-    private static final String OBJECT_FILENAME = "object.xml";
-
     /**
      * Reference to the current document.
      */
@@ -116,7 +111,7 @@ public class ObjectsReader extends AbstractReader
         }
     }
 
-    private void routeMetadata(Path path, InputStream inputStream) throws FilterException
+    private void routeProperty(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
         for (Property property : this.xObject.getProperties()) {
@@ -148,15 +143,15 @@ public class ObjectsReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         String fileName = path.toString();
-        if (fileName.equals(ObjectsReader.OBJECT_FILENAME)) {
+        if (fileName.equals(org.xwiki.xff.core.model.Object.OBJECT_FILENAME)) {
             this.parseObject(inputStream);
             this.start();
             return;
         } else {
             this.start();
         }
-        if (path.toString().startsWith("metadata")) {
-            this.routeMetadata(path, inputStream);
+        if (path.toString().startsWith(org.xwiki.xff.core.model.Property.PROPERTY_HINT)) {
+            this.routeProperty(path, inputStream);
         } else {
             String message = String.format("ObjectReader don't know how to route '%s'.", path.toString());
             throw new FilterException(message);

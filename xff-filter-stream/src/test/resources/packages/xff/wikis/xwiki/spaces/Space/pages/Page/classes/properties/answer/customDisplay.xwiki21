@@ -1,0 +1,13 @@
+{{velocity}}
+## The core will make available the following variables:
+## - $name[String] = the name of the displayed field ('propertyname')
+## - $prefix[String] = a prefix for the form field ('Space.Class_0_')
+## - $object[com.xpn.xwiki.api.Object] = the displayed object 
+## - $field[com.xpn.xwiki.api.PropertyClass] = the displayed property 
+## - $type[String] = the intended display mode ('view', 'edit', 'hidden', 'search', etc.)
+## - $value[] = the property value
+##
+#if($type == 'view')
+  $value
+#end
+{{/velocity}}

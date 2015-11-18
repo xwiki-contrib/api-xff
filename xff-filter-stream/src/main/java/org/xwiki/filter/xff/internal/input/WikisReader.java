@@ -41,15 +41,10 @@ import org.xwiki.rest.model.jaxb.Wiki;
  * @since 7.1
  */
 @Component
-@Named("wikis")
+@Named(org.xwiki.xff.core.model.Wiki.WIKI_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class WikisReader extends AbstractReader
 {
-    /**
-     * Name of the file to describe a wiki.
-     */
-    private static final String WIKI_FILENAME = "wiki.xml";
-
     /**
      * Reference to the current wiki.
      */
@@ -98,7 +93,7 @@ public class WikisReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         String fileName = path.toString();
-        if (fileName.equals(WikisReader.WIKI_FILENAME)) {
+        if (fileName.equals(org.xwiki.xff.core.model.Wiki.WIKI_FILENAME)) {
             this.parseWiki(inputStream);
             this.start();
             return;

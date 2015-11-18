@@ -41,15 +41,10 @@ import org.xwiki.rest.model.jaxb.Space;
  * @since 7.1
  */
 @Component
-@Named("spaces")
+@Named(org.xwiki.xff.core.model.Space.SPACE_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class SpacesReader extends AbstractReader
 {
-    /**
-     * Name of the file to describe a space.
-     */
-    private static final String SPACE_FILENAME = "space.xml";
-
     /**
      * Reference to the current space.
      */
@@ -98,7 +93,7 @@ public class SpacesReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         String fileName = path.toString();
-        if (fileName.equals(SpacesReader.SPACE_FILENAME)) {
+        if (fileName.equals(org.xwiki.xff.core.model.Space.SPACE_FILENAME)) {
             this.parseSpace(inputStream);
             this.start();
             return;

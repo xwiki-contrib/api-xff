@@ -45,15 +45,10 @@ import org.xwiki.rest.model.jaxb.Property;
  * @since 7.1
  */
 @Component
-@Named("classes")
+@Named(org.xwiki.xff.core.model.Class.CLASS_HINT)
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class ClassesReader extends AbstractReader
 {
-    /**
-     * Name of the file to describe a class.
-     */
-    private static final String CLASS_FILENAME = "class.xml";
-
     /**
      * Reference to the current document.
      */
@@ -104,7 +99,7 @@ public class ClassesReader extends AbstractReader
         }
     }
 
-    private void routeMetadata(Path path, InputStream inputStream) throws FilterException
+    private void routeProperty(Path path, InputStream inputStream) throws FilterException
     {
         String filename = path.getFileName().toString();
         String filePropertyName = path.getName(path.getNameCount() - 2).toString();
@@ -138,15 +133,15 @@ public class ClassesReader extends AbstractReader
     public void route(Path path, InputStream inputStream) throws FilterException
     {
         String fileName = path.toString();
-        if (fileName.equals(ClassesReader.CLASS_FILENAME)) {
+        if (fileName.equals(org.xwiki.xff.core.model.Class.CLASS_FILENAME)) {
             this.parseClass(inputStream);
             this.start();
             return;
         } else {
             this.start();
         }
-        if (path.toString().startsWith("metadata")) {
-            this.routeMetadata(path, inputStream);
+        if (path.toString().startsWith(org.xwiki.xff.core.model.Property.PROPERTY_HINT)) {
+            this.routeProperty(path, inputStream);
         } else {
             String message = String.format("ClassesReader don't know how to route '%s'.", path.toString());
             throw new FilterException(message);

@@ -19,16 +19,18 @@
  */
 package org.xwiki.filter.xff.test;
 
-import java.io.File;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
-import org.codehaus.plexus.util.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.xwiki.extension.test.ExtensionPackager;
 import org.xwiki.filter.test.integration.FilterTestSuite;
 import org.xwiki.filter.test.integration.FilterTestSuite.Scope;
 import org.xwiki.test.annotation.AllComponents;
+import org.xwiki.xff.core.XFFZipper;
 
 /**
  * Run all tests found in the classpath. These {@code *.test} files must follow the conventions described in
@@ -44,14 +46,20 @@ public class XFFIntegrationTest
     @BeforeClass
     public static void beforeClass() throws Exception
     {
-        File folder = new File("target/test-" + new Date().getTime()).getAbsoluteFile();
-        ExtensionPackager extensionPackager = new ExtensionPackager(null, folder);
-        extensionPackager.generateExtensions();
-        
-        File xffDirSrc = new File("target/test-classes/packagefile/xff");
-        File xffDirDst = new File(folder.toString() + "/xffdir");
-        FileUtils.copyDirectoryStructure(xffDirSrc, xffDirDst);
+        Path outPath = Paths.get("target/test-" + new Date().getTime()).toAbsolutePath();
+        Files.createDirectory(outPath);
 
-        System.setProperty("extension.repository", folder.getAbsolutePath());
+        Path xffInPath = Paths.get("target/test-classes/packages/xff").toAbsolutePath();
+        Path xffPath = Paths.get(outPath.toString(), "test-1.0.xff");
+        XFFZipper xffPackageZipper = new XFFZipper(xffInPath);
+        xffPackageZipper.xff(xffPath);
+
+        Path xffDirSrc = Paths.get("target/test-classes/packages/xff");
+        Path xffDirDst = Paths.get(outPath.toString() + "/xffdir");
+//        Files.copy(xffDirSrc, xffDirDst, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
+        FileVisitor<Path> visitor = new CopyDirVisitor(xffDirSrc, xffDirDst);
+        Files.walkFileTree(xffDirSrc, visitor);
+
+        System.setProperty("extension.repository", outPath.toAbsolutePath().toString());
     }
 }
