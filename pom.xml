@@ -43,6 +43,12 @@
     <tag>HEAD</tag>
   </scm>
 
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.xwiki.org/browse/XFF</url>
+  </issueManagement>
+
+
   <distributionManagement>
     <repository>
       <id>xwiki-staging</id>
