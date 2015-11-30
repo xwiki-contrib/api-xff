@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>xff-maven</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.4.0</version>
   </parent>
   <artifactId>xff-maven-handler</artifactId>
   <name>XFF - Maven - XFF Handler</name>
