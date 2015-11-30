@@ -23,10 +23,10 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>xff</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1-SNAPSHOT</version>
   </parent>
   <artifactId>xff-maven</artifactId>
-  <version>0.4.0</version>
+  <version>0.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>XFF - Maven - Parent POM</name>
   <description>APIs for the Xwiki Filesystem Format (XFF) format</description>
@@ -35,7 +35,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
 	<url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-maven</url>
-    <tag>xff-0.4.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <modules>
