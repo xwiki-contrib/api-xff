@@ -42,6 +42,13 @@
     <jacoco.version>0.7.4.201502262128</jacoco.version>
   </properties>
 
+  <developers>
+    <developer>
+      <id>woshilapin</id>
+      <name>Jean Simard</name>
+    </developer>
+  </developers>
+
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
