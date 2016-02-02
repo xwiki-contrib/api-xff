@@ -52,7 +52,7 @@
   <scm>
     <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
-    <url>https://github.com/xwiki-contrib/api-xff</url>
+    <url>https://github.com/xwiki-contrib/api-xff/tree/master</url>
     <tag>HEAD</tag>
   </scm>
 

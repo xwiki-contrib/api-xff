@@ -30,13 +30,6 @@
   <name>XFF - Core</name>
   <description>Core of the XFF packaging system which contains the model.</description>
 
-  <scm>
-    <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
-    <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
-    <url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-core</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <properties>
     <!-- Name to display by the Extension Manager -->
     <xwiki.extension.name>XFF Core</xwiki.extension.name>

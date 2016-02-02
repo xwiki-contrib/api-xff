@@ -31,13 +31,6 @@
   <name>XFF - Maven - Parent POM</name>
   <description>APIs for the Xwiki Filesystem Format (XFF) format</description>
 
-  <scm>
-    <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
-    <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
-	<url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-maven</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <modules>
     <module>xff-maven-handler</module>
     <module>xff-maven-plugin</module>
