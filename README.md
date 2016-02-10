@@ -13,6 +13,6 @@ XFF stands for XWiki File Format, which is a way to represent data for XWiki (di
 * License: LGPL 2.1
 * Development Practices: [XWiki dev practices](http://dev.xwiki.org)
 * Minimal XWiki version supported: XWiki 7.1.1
-* Continuous Integration: [Travis-CI](https://travis-ci.org/xwiki-contrib/api-xff), [Jenkins](http://jenkins.xwiki.org/job/contrib-api-xff/)
+* Continuous Integration: [Travis-CI](https://travis-ci.org/xwiki-contrib/api-xff), [Jenkins](http://ci.xwiki.org/job/contrib-api-xff/)
 * Code Coverage:  [Sonar](http://sonar.xwiki.org/dashboard/index/10464), [Coveralls.io](https://coveralls.io/github/xwiki-contrib/api-xff?branch=master)
 * Code Quality: [Sonar](http://sonar.xwiki.org/dashboard/index/10464), [Codacy](https://www.codacy.com/app/woshilapin/api-xff/dashboard)
