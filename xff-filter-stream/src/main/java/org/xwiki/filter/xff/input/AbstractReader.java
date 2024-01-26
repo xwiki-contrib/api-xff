@@ -99,10 +99,10 @@ public abstract class AbstractReader implements Reader
 
     /**
      * Will load the correct reader considering the next path. For example, if the next path is
-     * <tt>/wikis/xwiki/spaces/Space</tt> , then it will load the {@link WikisReader} because of the hint <tt>wikis</tt>
-     * .
+     * <tt>/wikis/xwiki/spaces/Space</tt> , then it will load the {@link org.xwiki.filter.xff.internal.input.WikisReader}
+     * because of the hint <tt>wikis</tt> .
      * 
-     * @param path for which you want to find a {@link Reader}
+     * @param hint the role hint of the {@link Reader} component
      * @return an instance of the corresponding {@link Reader}
      * @throws FilterException
      */
