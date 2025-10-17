@@ -25,6 +25,7 @@ import java.io.InputStream;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
@@ -48,6 +49,7 @@ import org.xwiki.rest.resources.xff.XFFResource;
  */
 @Component
 @Named("org.xwiki.rest.internal.resources.xff.DefaultXFFResource")
+@Singleton
 public class DefaultXFFResource implements XFFResource, XWikiRestComponent
 {
     private static final String DEFAULT_ENCODING = "encoding";

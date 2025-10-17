@@ -53,16 +53,12 @@
       <artifactId>maven-verifier</artifactId>
       <version>1.4</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
-      <artifactId>junit</artifactId>
-      <groupId>junit</groupId>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-tool-test-simple</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

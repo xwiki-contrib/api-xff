@@ -25,7 +25,6 @@
     <artifactId>xff</artifactId>
     <version>0.4.1-SNAPSHOT</version>
   </parent>
-  <groupId>org.xwiki.contrib</groupId>
   <artifactId>xff-rest-api</artifactId>
   <packaging>jar</packaging>
   <name>XFF - REST API</name>
@@ -40,7 +39,6 @@
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>jsr311-api</artifactId>
-      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.xwiki.commons</groupId>

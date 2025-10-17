@@ -21,25 +21,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.xwiki.commons</groupId>
-    <artifactId>xwiki-commons-pom</artifactId>
-    <version>7.1.1</version>
+    <groupId>org.xwiki.contrib</groupId>
+    <artifactId>parent-platform</artifactId>
+    <version>8.4-15</version>
   </parent>
-  <groupId>org.xwiki.contrib</groupId>
   <artifactId>xff</artifactId>
   <version>0.4.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>XFF - Parent POM</name>
   <description>APIs for the Xwiki Filesystem Format (XFF) format</description>
   <properties>
-    <platform.version>${commons.version}</platform.version>
+    <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
+    <xwiki.issueManagement.jira.id>XFF</xwiki.issueManagement.jira.id>
+
     <xwiki.extension.category>application</xwiki.extension.category>
-    <!-- TODO: There's a regression with version 0.7.5.201505241946, see
-      - http://stackoverflow.com/questions/30459260/jacoco-sonarqube-incompatible-version-1007
-      - http://jira.codehaus.org/browse/SONARJAVA-1091
-      Remove once version 3.4 of the SonarQube JaCoCo plugin is released and installed on sonar.xwiki.org
-    -->
-    <jacoco.version>0.7.4.201502262128</jacoco.version>
   </properties>
 
   <developers>
@@ -56,44 +51,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.xwiki.org/browse/XFF</url>
-  </issueManagement>
-
-  <distributionManagement>
-    <repository>
-      <id>xwiki-staging</id>
-      <name>XWiki Staging Repository</name>
-      <url>http://nexus.xwiki.org/nexus/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>xwiki-snapshots</id>
-      <name>XWiki Nexus Snapshot Repository Proxy</name>
-      <url>http://nexus.xwiki.org/nexus/content/groups/public-snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>xwiki-releases</id>
-      <name>XWiki Nexus Releases Repository Proxy</name>
-      <url>http://nexus.xwiki.org/nexus/content/groups/public</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <modules>
     <module>xff-core</module>
     <module>xff-filter-stream</module>
@@ -104,11 +61,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.version}</version>
-        </plugin>
         <plugin>
           <groupId>org.eluder.coveralls</groupId>
           <artifactId>coveralls-maven-plugin</artifactId>

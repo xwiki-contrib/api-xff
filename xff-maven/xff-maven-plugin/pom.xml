@@ -30,13 +30,6 @@
   <name>XFF - Maven - Maven Plugin</name>
   <description>Maven plugin to build XFF packages</description>
 
-  <scm>
-    <connection>scm:git:git://github.com/xwiki-contrib/api-xff.git</connection>
-    <developerConnection>scm:git:git@github.com:xwiki-contrib/api-xff.git</developerConnection>
-	<url>https://github.com/xwiki-contrib/api-xff/tree/master/xff-maven/xff-maven-plugin</url>
-    <tag>HEAD</tag>
-  </scm>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -80,7 +73,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.4</version>
         <configuration>
           <!-- This to allow calling mvn xff:<mojo> from the command line. For example mvn xff:format
                Without this users would need to call mvn org.xwiki.contrib:xff-maven-plugin:format -->
